@@ -1,0 +1,51 @@
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Worldstate Tree Widget Example</a>
+        </div>
+        <div class="navbar-collapse collapse">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <catalogue-tree class="catalagoue-tree" options="treeOptions" nodes="nodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>
+            <span class="mouseIcon label label-info"  ng-click="switchTreeMode()">
+                <span ng-hide="treeOptions.multiSelection">show</span> 
+                <span ng-hide="!treeOptions.multiSelection">hide</span> checkboxes</span>
+            <span class="mouseIcon label label-info"  ng-click="switchIcon()"> use 
+                <span ng-hide="isWorldstateIcon">world</span> 
+                <span ng-hide="!isWorldstateIcon">folder</span> icon</span>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Active Item</h1>
+            <div class="row placeholders">
+                <div>
+                    <p>{{activeItem.object.id}} - {{activeItem.name}} </p>
+                </div>
+            </div>
+
+            <h1 class="page-header">Selected Items ({{treeSelection.length}})</h1>
+
+            <div class="row placeholders">
+                <div>
+                    <ul>
+                        <li ng-repeat="worldstate in treeSelection">
+                            <p>{{worldstate.object.id}} - {{worldstate.name}} </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
