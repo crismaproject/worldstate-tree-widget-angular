@@ -1,1 +1,9 @@
 /nbproject/private/
+dist/*
+!dist/scripts
+!dist/styles
+.tmp
+.sass-cache
+app/bower_components
+.idea
+
