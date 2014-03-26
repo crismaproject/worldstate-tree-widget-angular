@@ -36,8 +36,8 @@ angular.module(
             $scope.switchTreeMode = function () {
                 $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
             };
-            $scope.nodes = Nodes.query(function (data) {
-                console.log(data);
+            $scope.nodes = Nodes.query({
+                filter:'parentworldstate:null'
             });
         }
     ]

@@ -55,12 +55,19 @@ angular.module(
                 {nodeId: '@id', domain: CRISMA_DOMAIN},
                 {
                     //belongs to the GET /nodes/{domain}.{nodekey} action of the icmm api
-                    get: {method: 'GET', params: {deduplicate: true}, url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates'},
+                    get: {
+                        method: 'GET',
+                        params: {deduplicate: true},
+                        url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates?limit=100&offset=0&level=1',
+                        transformResponse: function (data) {
+                            return transformResult(data);
+                        }
+                    },
                     // belongs to the /nodes action of the icmm api
                     query: {
                         method: 'GET',
                         isArray: true,
-                        url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates?limit=100&offset=0&level=1&filter=parentworldstate%3Anull&omitNullValues=false&deduplicate=true',
+                        url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates?limit=100&offset=0&level=1&omitNullValues=false&deduplicate=true',
                         transformResponse: function (data) {
                             return transformResult(data);
                         }
