@@ -183,23 +183,26 @@ angular.module(
                             if (newVal !== oldVal) {
                                 //we need to change the tree
                                 dynatreeRoot = dynatreeRootElem.dynatree('getRoot');
+                                if (backupNeeded) {
+                                    treeBackup = dynatreeRoot.getChildren();
+                                    backupNeeded = false;
+                                }
                                 dynatreeRoot.removeChildren();
                                 if (scope.filterResult.length <= 0) {
                                     for (var i = 0; i < treeBackup.length; i++) {
-                                        node = newVal[i];
-                                        dynatreeRoot.addChild(creatDynaTreeNode(node));
+                                        node = treeBackup[i];
+                                        dynatreeRoot.addChild(creatDynaTreeNode(node.data.cidsNode));
                                     }
                                 } else {
-                                    if (backupNeeded) {
-                                        treeBackup = dynatreeRoot.getChildren();
-                                        backupNeeded = false;
-                                    }
                                     for (var i = 0; i < newVal.length; i++) {
                                         node = newVal[i];
                                         dynatreeRoot.addChild(creatDynaTreeNode(node));
                                     }
+                                    dynatreeRootElem.dynatree('getRoot').visit(function(node) {
+                                        node.render();
+                                    });
                                 }
-                            }
+                             }
                         }, true);
 
                         // watch for changes in the option object
