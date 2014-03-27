@@ -19,7 +19,8 @@ angular.module(
                 folderIconOpen: 'icon-folder-open.png',
                 leafIcon: 'icon-file.png',
                 imagePath: './images/',
-                multiSelection: false
+                multiSelection: false,
+                showFilter:true,
             };
             $scope.switchIcon = function () {
                 if (!$scope.isWorldstateIcon) {

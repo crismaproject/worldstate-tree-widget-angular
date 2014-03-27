@@ -238,6 +238,9 @@ angular.module(
                                             case 'leafIcon':
                                                 iconChanged = true;
                                                 break;
+                                            case 'showFilter':
+                                                scope.showFilter=value;
+                                                break;
                                         }
                                     }
                                 }
@@ -319,6 +322,9 @@ angular.module(
                                     case 'multiSelection':
                                         registerEventCallbacks(scopeOptionsValue);
                                         break;
+                                    case 'showFilter':
+                                        scope.showFilter=scopeOptionsValue;
+                                        break;
                                 }
                             }
                         }
@@ -333,7 +339,7 @@ angular.module(
                         nodes: '=',
                         selectedNodes: '=selection',
                         activeNode: '=?',
-                        options: '=?'
+                        options: '=?',
                     }
                 };
             }
