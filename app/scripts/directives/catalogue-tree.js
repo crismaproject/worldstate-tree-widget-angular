@@ -1,48 +1,52 @@
 angular.module(
-        'de.cismet.crisma.widgets.worldstateTreeWidget.directives'
-        ).directive('catalogueTree',
+    'de.cismet.crisma.widgets.worldstateTreeWidget.directives',
+    [
+        'de.cismet.commons.angular.angularTools',
+        'de.cismet.crisma.widgets.worldstateTreeWidget.services'
+    ]
+).directive('catalogueTree',
         [
-            'de.cismet.commons.angular.angularTools.AngularTools',
-            function(AngularTools) {
-                'use strict';
-                return {
-                    templateUrl: 'templates/catalogue-tree.html',
-                    restrict: 'E',
-                    link: function postLink(scope, element) {
-                        var dynaTreeRootNodes = [], scopeOptionsValue,
-                                dynatreeOptions, deregisterWatch,
-                                treeBackup, backupNeeded = true,
-                                isInitialized = false,
-                                // get the div element we wont to put the dynatree
+        'de.cismet.commons.angular.angularTools.AngularTools',
+        function (AngularTools) {
+            'use strict';
+            return {
+                templateUrl: 'templates/catalogue-tree.html',
+                restrict: 'E',
+                link: function postLink(scope, element) {
+                    var dynaTreeRootNodes = [], scopeOptionsValue,
+                        dynatreeOptions, deregisterWatch,
+                        treeBackup, backupNeeded = true,
+                        isInitialized = false,
+                            // get the div element we wont to put the dynatree
 //                        elemChilds = element.children(),
-                                dynatreeRootElem = angular.element("#tree"),
-                                defaultClassNames = {
-                                    container: 'dynatree-container',
-                                    node: 'dynatree-node',
-                                    folder: 'dynatree-folder',
-                                    empty: 'dynatree-empty',
-                                    vline: 'dynatree-vline',
-                                    expander: 'dynatree-expander',
-                                    connector: 'dynatree-connector',
-                                    checkbox: 'dynatree-checkbox',
-                                    nodeIcon: 'dynatree-icon',
-                                    title: 'dynatree-title',
-                                    noConnector: 'dynatree-no-connector',
-                                    nodeError: 'dynatree-statusnode-error',
-                                    nodeWait: 'dynatree-statusnode-wait',
-                                    hidden: 'dynatree-hidden',
-                                    combinedExpanderPrefix: 'dynatree-exp-',
-                                    combinedIconPrefix: 'dynatree-ico-',
-                                    hasChildren: 'dynatree-has-children',
-                                    active: 'dynatree-active',
-                                    selected: 'dynatree-selected',
-                                    expanded: 'dynatree-expanded',
-                                    lazy: 'dynatree-lazy',
-                                    focused: 'dynatree-focused',
-                                    partsel: 'dynatree-partsel',
-                                    lastsib: 'dynatree-lastsib'
-                                },
-                        copyDefaultOptions = function() {
+                        dynatreeRootElem = angular.element("#tree"),
+                        defaultClassNames = {
+                            container: 'dynatree-container',
+                            node: 'dynatree-node',
+                            folder: 'dynatree-folder',
+                            empty: 'dynatree-empty',
+                            vline: 'dynatree-vline',
+                            expander: 'dynatree-expander',
+                            connector: 'dynatree-connector',
+                            checkbox: 'dynatree-checkbox',
+                            nodeIcon: 'dynatree-icon',
+                            title: 'dynatree-title',
+                            noConnector: 'dynatree-no-connector',
+                            nodeError: 'dynatree-statusnode-error',
+                            nodeWait: 'dynatree-statusnode-wait',
+                            hidden: 'dynatree-hidden',
+                            combinedExpanderPrefix: 'dynatree-exp-',
+                            combinedIconPrefix: 'dynatree-ico-',
+                            hasChildren: 'dynatree-has-children',
+                            active: 'dynatree-active',
+                            selected: 'dynatree-selected',
+                            expanded: 'dynatree-expanded',
+                            lazy: 'dynatree-lazy',
+                            focused: 'dynatree-focused',
+                            partsel: 'dynatree-partsel',
+                            lastsib: 'dynatree-lastsib'
+                        },
+                        copyDefaultOptions = function () {
                             var cn = {};
                             for (var prop in defaultClassNames) {
                                 if (defaultClassNames.hasOwnProperty(prop)) {
@@ -175,29 +179,39 @@ angular.module(
                             }
                             deregisterWatch();
                         });
-
-                        scope.$watch('filterResult', function(newVal, oldVal) {
-                            var dynatreeRoot, node;
+                        scope.$watch('filteredNodes', function(newVal, oldVal) {
+                            var dynatreeRoot, backUpNode,newNode, childNode,node;
                             // if the filter result changes, we need to save the current tree
                             // and need to make a new tree with the filter result
                             if (newVal !== oldVal) {
                                 //we need to change the tree
                                 dynatreeRoot = dynatreeRootElem.dynatree('getRoot');
                                 if (backupNeeded) {
-                                    treeBackup = dynatreeRoot.getChildren();
+//                                    treeBackup = dynatreeRoot.getChildren();
+                                    treeBackup = dynatreeRootElem.dynatree('getTree').toDict();
                                     backupNeeded = false;
                                 }
                                 dynatreeRoot.removeChildren();
-                                if (scope.filterResult.length <= 0) {
-                                    for (var i = 0; i < treeBackup.length; i++) {
-                                        node = treeBackup[i];
-                                        dynatreeRoot.addChild(creatDynaTreeNode(node.data.cidsNode));
-                                    }
+                                if (scope.filteredNodes.length <= 0) {
+                                    // If the filter does not show a result, show the origin tree
+                                    dynatreeRoot.addChild(treeBackup);
+                                    // we need to restore the active item and the selection
+                                    dynatreeRootElem.dynatree('getRoot').visit(function(node) {
+                                       scope.selectedNodes=[];
+                                       if(node.isActive()){
+                                            scope.activeNode=node.data.cidsNode;
+                                       }
+                                       if(node.isSelected()){
+                                            scope.selectedNodes.push(node.data.cidsNode);    
+                                       }
+                                    });
+                                    backupNeeded=true;
                                 } else {
                                     for (var i = 0; i < newVal.length; i++) {
                                         node = newVal[i];
                                         dynatreeRoot.addChild(creatDynaTreeNode(node));
                                     }
+                                    
                                     dynatreeRootElem.dynatree('getRoot').visit(function(node) {
                                         node.render();
                                     });
@@ -340,6 +354,7 @@ angular.module(
                         selectedNodes: '=selection',
                         activeNode: '=?',
                         options: '=?',
+                        filteredNodes:'=?'
                     }
                 };
             }

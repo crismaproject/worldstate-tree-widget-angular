@@ -19,7 +19,10 @@
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <!--<catalogue-filter filter-result="filterResult"></catalogue-filter>-->
-            <catalogue-tree class="catalagoue-tree" options="treeOptions" nodes="nodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>
+            <div ng-show="showFilter">
+                <catalogue-filter filter-result="filterResult"></catalogue-filter>
+            </div>
+            <catalogue-tree class="catalagoue-tree" options="treeOptions" nodes="nodes" filtered-nodes="WsFilter.filterResult" selection="treeSelection" active-node="activeItem"></catalogue-tree>
             <span class="mouseIcon label label-info"  ng-click="switchTreeMode()">
                 <span ng-hide="treeOptions.multiSelection">show</span> 
                 <span ng-hide="!treeOptions.multiSelection">hide</span> checkboxes</span>

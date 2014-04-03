@@ -8,9 +8,12 @@ angular.module(
     [
         '$scope',
         'de.cismet.crisma.widgets.worldstateTreeWidget.services.Nodes',
-        function ($scope, Nodes) {
+        'de.cismet.crisma.widgets.worldstateTreeWidget.services.WorldStateFilterService',
+        function ($scope, Nodes, WsFilter) {
             'use strict';
+            $scope.WsFilter = WsFilter;
             $scope.treeSelection = [];
+            $scope.showFilter = true;
             $scope.activeItem = {};
             $scope.isWorldstateIcon = false;
             $scope.treeOptions = {
@@ -20,7 +23,7 @@ angular.module(
                 leafIcon: 'icon-file.png',
                 imagePath: './images/',
                 multiSelection: false,
-                showFilter:true,
+                showFilter: true
             };
             $scope.switchIcon = function () {
                 if (!$scope.isWorldstateIcon) {
@@ -38,7 +41,7 @@ angular.module(
                 $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
             };
             $scope.nodes = Nodes.query({
-                filter:'parentworldstate:null'
+                filter: 'parentworldstate:null'
             });
         }
     ]
