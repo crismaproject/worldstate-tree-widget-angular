@@ -1,6 +1,6 @@
 angular.module(
     'de.cismet.crisma.widgets.worldstateTreeWidget.directives'
-    ).directive('catalogueFilter',
+).directive('catalogueFilter',
     [
         'de.cismet.crisma.widgets.worldstateTreeWidget.services.Nodes',
         'de.cismet.crisma.widgets.worldstateTreeWidget.services.WorldStateFilterService',
