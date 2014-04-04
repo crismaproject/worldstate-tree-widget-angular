@@ -4,7 +4,7 @@ angular.module(
         'de.cismet.commons.angular.angularTools',
         'de.cismet.crisma.widgets.worldstateTreeWidget.services'
     ]
-    ).directive('catalogueTree',
+).directive('catalogueTree',
     [
         'de.cismet.commons.angular.angularTools.AngularTools',
         function (AngularTools) {
@@ -12,7 +12,7 @@ angular.module(
             return {
                 templateUrl: 'templates/catalogue-tree.html',
                 restrict: 'E',
-                link: function postLink(scope) {
+                link: function postLink (scope) {
                     var dynaTreeRootNodes = [], scopeOptionsValue,
                         dynatreeOptions, deregisterWatch,
                         treeBackup, backupNeeded = true,
@@ -192,12 +192,13 @@ angular.module(
                                 backupNeeded = false;
                             }
                             dynatreeRoot.removeChildren();
+                            scope.selectedNodes.splice(0, scope.selectedNodes.length);
+                            scope.activeNode = {};
                             if (scope.filteredNodes.length <= 0) {
                                 // If the filter does not show a result, show the origin tree
                                 dynatreeRoot.addChild(treeBackup);
                                 // we need to restore the active item and the selection
                                 dynatreeRootElem.dynatree('getRoot').visit(function (node) {
-                                    scope.selectedNodes = [];
                                     if (node.isActive()) {
                                         scope.activeNode = node.data.cidsNode;
                                     }
@@ -205,8 +206,10 @@ angular.module(
                                         scope.selectedNodes.push(node.data.cidsNode);
                                     }
                                 });
+                                scope.selectedNodes = scope.selectedNodes.sort();
                                 backupNeeded = true;
                             } else {
+                                //show the filer result 
                                 for (var i = 0; i < newVal.length; i++) {
                                     node = newVal[i];
                                     dynatreeRoot.addChild(creatDynaTreeNode(node));
