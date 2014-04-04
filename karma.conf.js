@@ -14,8 +14,11 @@ module.exports = function(config) {
       'app/bower_components/angular/angular.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
       'app/bower_components/angular-resource/angular-resource.js',
-      'app/scripts/*.js',
-      'app/scripts/**/*.js',
+      'app/scripts/services/nodes.js',
+      'app/scripts/services/worldstate-filter-service.js',
+      'app/scripts/directives/catalogue-tree.js',
+      'app/scripts/directives/catalogue-filter.js',
+      'app/scripts/app.js',
       'test/mock/**/*.js',
       'test/spec/**/*.js'
     ],
