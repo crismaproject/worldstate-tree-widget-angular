@@ -26,7 +26,7 @@ angular.module(
 
                 for (i = 0; i < col.length; ++i) {
                     ws = col[i];
-                    hasChilds = ws.childworldstates.length > 0 ? true : false;
+                    hasChilds = (ws.childworldstates && ws.childworldstates.length > 0) ? true : false;
 //                        var icon = "";
                     icon = hasChilds ? 'glyphicon glyphicon-folder-close' : 'glyphicon glyphicon-map-marker';
 
