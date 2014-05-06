@@ -108,8 +108,7 @@ module.exports = function (grunt) {
               '<%= yeoman.dist %>/bower_components/angular-mocks',
               '<%= yeoman.dist %>/bower_components/angular-scenario',
               '<%= yeoman.dist %>/bower_components/jquery',
-              '<%= yeoman.dist %>/bower_components/bootstrap',
-              '<%= yeoman.dist %>/images'
+              '<%= yeoman.dist %>/bower_components/jquery-ui',
           ]
       },
       server: '.tmp'
@@ -282,7 +281,7 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
-      }
+      },
     },
     concurrent: {
       server: [
@@ -358,8 +357,11 @@ module.exports = function (grunt) {
             dest: ['<%= yeoman.dist %>/index.html'],
             replacements: [
                 {from: 'bower_components/bootstrap/dist/css/bootstrap.css', to: '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'},
+                {from: 'bower_components/bootstrap/dist/js/bootstrap.js', to: '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js'},
                 {from: 'bower_components/angular/angular.js', to: '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular.min.js'},
                 {from: 'bower_components/angular-resource/angular-resource.js', to: '//ajax.googleapis.com/ajax/libs/angularjs/1.2.7/angular-resource.min.js'},
+                {from: 'bower_components/jquery/dist/jquery.js', to: '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'},
+                {from: 'bower_components/jquery-ui/ui/jquery-ui.js', to: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js'},
                 // mixed opinion on this topic (replace bower dep with min on dist creation), but no solution
                 {from: 'bower_components/angular-commons/dist/scripts/angular-commons.js', to: 'bower_components/angular-commons/dist/scripts/angular-commons.min.js'}
             ]
