@@ -3,7 +3,7 @@ angular.module(
     [
         'de.cismet.commons.angular.angularTools'
     ]
-    ).directive('catalogueTree',
+).directive('catalogueTree',
     [
         'de.cismet.commons.angular.angularTools.AngularTools',
         function (AngularTools) {
@@ -11,7 +11,7 @@ angular.module(
             return {
                 templateUrl: 'templates/catalogue-tree.html',
                 restrict: 'E',
-                link: function postLink (scope, element) {
+                link: function postLink(scope, element) {
                     var dynaTreeRootNodes = [], scopeOptionsValue,
                         dynatreeOptions, deregisterWatch, regardSelection,
                         isInitialized = false,
@@ -41,15 +41,15 @@ angular.module(
                             partsel: 'dynatree-partsel',
                             lastsib: 'dynatree-lastsib'
                         },
-                    copyDefaultOptions = function () {
-                        var cn = {}, prop;
-                        for (prop in defaultClassNames) {
-                            if (defaultClassNames.hasOwnProperty(prop)) {
-                                cn[prop] = defaultClassNames[prop];
+                        copyDefaultOptions = function () {
+                            var cn = {}, prop;
+                            for (prop in defaultClassNames) {
+                                if (defaultClassNames.hasOwnProperty(prop)) {
+                                    cn[prop] = defaultClassNames[prop];
+                                }
                             }
-                        }
-                        return cn;
-                    },
+                            return cn;
+                        },
                         getIcon = function (isLeaf, isExpanded) {
                             var icon;
                             if (isLeaf) {
@@ -201,7 +201,7 @@ angular.module(
                             for (i = 0; i < scope.selectedNodes.length; i++) {
                                 selNode = scope.selectedNodes[i];
                                 if (visitedNode[selNode.key]) {
-                                    console.error('The worldstate '+selNode.key+' is contained multiple times in the ' +
+                                    console.error('The worldstate ' + selNode.key + ' is contained multiple times in the ' +
                                         'selectedNodes property bound to the worldstateTreeWidget. Multiple items ' +
                                         'are ignored by the worldstateTreeWidget but should be avoided');
                                 } else {
@@ -223,27 +223,27 @@ angular.module(
                                 isNewProp = value && !oldValue;
                                 if (hasChanged || isNewProp) {
                                     switch (key) {
-                                        case 'checkboxClass':
-                                            element.dynatree('option', 'classNames.checkbox', value);
-                                            break;
-                                        case 'checkboxEnabled':
-                                            element.dynatree('option', 'checkbox', value);
-                                            break;
-                                        case 'imagePath':
-                                            element.dynatree('option', 'imagePath', value);
-                                            break;
-                                        case 'multiSelection':
-                                            registerEventCallbacks(value, true);
-                                            break;
-                                        case 'folderIconClosed':
-                                            iconChanged = true;
-                                            break;
-                                        case 'folderIconOpen':
-                                            iconChanged = true;
-                                            break;
-                                        case 'leafIcon':
-                                            iconChanged = true;
-                                            break;
+                                    case 'checkboxClass':
+                                        element.dynatree('option', 'classNames.checkbox', value);
+                                        break;
+                                    case 'checkboxEnabled':
+                                        element.dynatree('option', 'checkbox', value);
+                                        break;
+                                    case 'imagePath':
+                                        element.dynatree('option', 'imagePath', value);
+                                        break;
+                                    case 'multiSelection':
+                                        registerEventCallbacks(value, true);
+                                        break;
+                                    case 'folderIconClosed':
+                                        iconChanged = true;
+                                        break;
+                                    case 'folderIconOpen':
+                                        iconChanged = true;
+                                        break;
+                                    case 'leafIcon':
+                                        iconChanged = true;
+                                        break;
                                     }
                                 }
                             }
@@ -325,18 +325,18 @@ angular.module(
                         for (var key in scope.options) {
                             scopeOptionsValue = scope.options[key];
                             switch (key) {
-                                case 'checkboxClass':
-                                    dynatreeOptions.classNames.checkbox = scopeOptionsValue;
-                                    break;
-                                case 'checkboxEnabled':
-                                    dynatreeOptions.checkbox = scopeOptionsValue || false;
-                                    break;
-                                case 'imagePath':
-                                    dynatreeOptions.imagePath = scopeOptionsValue;
-                                    break;
-                                case 'multiSelection':
-                                    registerEventCallbacks(scopeOptionsValue);
-                                    break;
+                            case 'checkboxClass':
+                                dynatreeOptions.classNames.checkbox = scopeOptionsValue;
+                                break;
+                            case 'checkboxEnabled':
+                                dynatreeOptions.checkbox = scopeOptionsValue || false;
+                                break;
+                            case 'imagePath':
+                                dynatreeOptions.imagePath = scopeOptionsValue;
+                                break;
+                            case 'multiSelection':
+                                registerEventCallbacks(scopeOptionsValue);
+                                break;
                             }
                         }
                     }
