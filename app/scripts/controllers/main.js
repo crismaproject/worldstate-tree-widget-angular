@@ -35,8 +35,8 @@ angular.module(
             $scope.switchTreeMode = function () {
                 $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
             };
-
-
+            
+            $scope.treeSelection=[];
             Nodes.query(function (data) {
                 $scope.nodes = data;
             });
