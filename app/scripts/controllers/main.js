@@ -1,16 +1,15 @@
 angular.module(
     'de.cismet.crisma.widgets.worldstateTreeWidget.controllers',
     [
-        'de.cismet.crisma.widgets.worldstateTreeWidget.services'
+        'de.cismet.cids.rest.collidngNames.Nodes'
     ]
-).controller(
+    ).controller(
     'MainCtrl',
     [
         '$scope',
-        'de.cismet.crisma.widgets.worldstateTreeWidget.services.Nodes',
+        'de.cismet.collidingNameService.Nodes',
         function ($scope, Nodes) {
             'use strict';
-            $scope.treeSelection = [];
             $scope.activeItem = {};
             $scope.isWorldstateIcon = false;
             $scope.treeOptions = {
@@ -19,7 +18,7 @@ angular.module(
                 folderIconOpen: 'icon-folder-open.png',
                 leafIcon: 'icon-file.png',
                 imagePath: './images/',
-                multiSelection: false
+                multiSelection: true
             };
             $scope.switchIcon = function () {
                 if (!$scope.isWorldstateIcon) {
@@ -36,9 +35,14 @@ angular.module(
             $scope.switchTreeMode = function () {
                 $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
             };
-            $scope.nodes = Nodes.query(function (data) {
-                console.log(data);
+
+            Nodes.get({nodeId: 59}, function (ws59) {
+
+                Nodes.query(function (data) {
+                    $scope.treeSelection = data.slice().concat(ws59);
+                    $scope.nodes = data;
+                });
             });
         }
     ]
-);
+    );
