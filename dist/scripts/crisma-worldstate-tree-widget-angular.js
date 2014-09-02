@@ -1,14 +1,12 @@
 angular.module('de.cismet.crisma.widgets.worldstateTreeWidget', [
   'de.cismet.crisma.widgets.worldstateTreeWidget.directives',
-  'de.cismet.crisma.widgets.worldstateTreeWidget.services',
   'de.cismet.crisma.widgets.worldstateTreeWidget.controllers'
 ]);
-angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', ['de.cismet.crisma.widgets.worldstateTreeWidget.services']).controller('MainCtrl', [
+angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', ['de.cismet.cids.rest.collidngNames.Nodes']).controller('MainCtrl', [
   '$scope',
-  'de.cismet.crisma.widgets.worldstateTreeWidget.services.Nodes',
+  'de.cismet.collidingNameService.Nodes',
   function ($scope, Nodes) {
     'use strict';
-    $scope.treeSelection = [];
     $scope.activeItem = {};
     $scope.isWorldstateIcon = false;
     $scope.treeOptions = {
@@ -17,7 +15,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', ['de
       folderIconOpen: 'icon-folder-open.png',
       leafIcon: 'icon-file.png',
       imagePath: './images/',
-      multiSelection: false
+      multiSelection: true
     };
     $scope.switchIcon = function () {
       if (!$scope.isWorldstateIcon) {
@@ -34,8 +32,11 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', ['de
     $scope.switchTreeMode = function () {
       $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
     };
-    $scope.nodes = Nodes.query(function (data) {
-      console.log(data);
+    Nodes.get({ nodeId: 59 }, function (ws59) {
+      Nodes.query(function (data) {
+        $scope.treeSelection = data.slice().concat(ws59);
+        $scope.nodes = data;
+      });
     });
   }
 ]);
@@ -47,7 +48,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
       templateUrl: 'templates/catalogue-tree.html',
       restrict: 'E',
       link: function postLink(scope, element) {
-        var dynaTreeRootNodes = [], scopeOptionsValue, dynatreeOptions, deregisterWatch, isInitialized = false, defaultClassNames = {
+        var dynaTreeRootNodes = [], scopeOptionsValue, dynatreeOptions, deregisterWatch, regardSelection, isInitialized = false, defaultClassNames = {
             container: 'dynatree-container',
             node: 'dynatree-node',
             folder: 'dynatree-folder',
@@ -73,8 +74,8 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             partsel: 'dynatree-partsel',
             lastsib: 'dynatree-lastsib'
           }, copyDefaultOptions = function () {
-            var cn = {};
-            for (var prop in defaultClassNames) {
+            var cn = {}, prop;
+            for (prop in defaultClassNames) {
               if (defaultClassNames.hasOwnProperty(prop)) {
                 cn[prop] = defaultClassNames[prop];
               }
@@ -185,23 +186,35 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
         // when the directive is initialized the nodes array can be empty. 
         // This watch listens for changes in the array builds the first level nodes from it.
         deregisterWatch = scope.$watchCollection('nodes', function (newVal, oldval) {
-          var j, dynatreeRoot, cidsNode;
+          var j, k, dynatreeRoot, cidsNode, dynatreeNode, childNode;
           if (newVal !== oldval) {
-            scope.selectedNodes.splice(0, scope.selectedNodes.length);
+            //                      scope.selectedNodes.splice(0,scope.selectedNodes.length);
+            if (scope.selectedNodes && scope.selectedNodes.length > 0) {
+              regardSelection = true;
+            }
             scope.activeNode = undefined;
             dynatreeRoot = element.dynatree('getRoot');
             dynatreeRoot.removeChildren();
             for (j = 0; j < newVal.length; j++) {
               cidsNode = newVal[j];
-              dynatreeRoot.addChild(creatDynaTreeNode(cidsNode));
+              dynatreeNode = creatDynaTreeNode(cidsNode);
+              childNode = dynatreeRoot.addChild(dynatreeNode);
+              if (regardSelection) {
+                for (k = 0; j < scope.selectedNodes.length; k++) {
+                  if (scope.selectedNodes[k].key === dynatreeNode.cidsNode.key) {
+                    childNode.toggleSelect();
+                    break;
+                  }
+                }
+              }
             }
           }
         });
         // watch for changes in the option object
         scope.$watch('options', function (newVal, oldVal) {
-          var iconChanged = false, value, oldValue, hasChanged, isNewProp;
+          var iconChanged = false, value, oldValue, hasChanged, key, isNewProp;
           if (isInitialized) {
-            for (var key in scope.options) {
+            for (key in scope.options) {
               value = newVal[key];
               oldValue = oldVal[key];
               hasChanged = value !== oldValue;
@@ -255,7 +268,10 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             var index, selectedCidsObject;
             selectedCidsObject = node.data.cidsNode;
             if (selected) {
-              scope.selectedNodes.push(selectedCidsObject);
+              //check if the node is not already contained..
+              if (scope.selectedNodes.indexOf(selectedCidsObject) === -1) {
+                scope.selectedNodes.push(selectedCidsObject);
+              }
             } else {
               index = scope.selectedNodes.indexOf(selectedCidsObject);
               if (index >= 0) {
@@ -271,7 +287,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             return true;
           },
           onLazyRead: function (node) {
-            var cidsNode, callback, childNode;
+            var cidsNode, callback, childNode, addedChildNode;
             cidsNode = node.data.cidsNode;
             node.data.addClass = 'dynatree-loading';
             node.render();
@@ -280,7 +296,15 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
               for (i = 0; i < children.length; i++) {
                 cidsNodeCB = children[i];
                 childNode = creatDynaTreeNode(cidsNodeCB);
-                node.addChild(childNode);
+                addedChildNode = node.addChild(childNode);
+                if (regardSelection) {
+                  for (var j = 0; j < scope.selectedNodes.length; j++) {
+                    if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
+                      addedChildNode.toggleSelect();
+                      break;
+                    }
+                  }
+                }
               }
               node.data.addClass = '';
               /*jshint camelcase: false */
@@ -321,82 +345,5 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
         options: '=?'
       }
     };
-  }
-]);
-/* Services */
-angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.services', ['ngResource']).service('de.cismet.crisma.widgets.worldstateTreeWidget.services.Nodes', [
-  '$resource',
-  '$timeout',
-  'CRISMA_ICMM_API',
-  'CRISMA_DOMAIN',
-  function ($resource, $timeout, CRISMA_ICMM_API, CRISMA_DOMAIN) {
-    'use strict';
-    var transformResult, Nodes;
-    transformResult = function (data) {
-      var col = JSON.parse(data).$collection, res = [], i, ws, hasChilds, icon, node, that, getChildrenFunc = function (callback) {
-          that = this;
-          $timeout(function () {
-            Nodes.children({ filter: 'parentworldstate.id:' + that.object.id }, callback);
-          }, 1000);
-        };
-      for (i = 0; i < col.length; ++i) {
-        ws = col[i];
-        hasChilds = ws.childworldstates && ws.childworldstates.length > 0 ? true : false;
-        //                        var icon = "";
-        icon = hasChilds ? 'glyphicon glyphicon-folder-close' : 'glyphicon glyphicon-map-marker';
-        node = {
-          key: ws.id,
-          name: ws.name,
-          classKey: 42,
-          objectKey: ws.id,
-          type: 'objectNode',
-          org: '',
-          dynamicChildren: '',
-          clientSort: false,
-          derivePermissionsFromClass: false,
-          icon: icon,
-          isLeaf: !hasChilds,
-          object: ws,
-          getChildren: getChildrenFunc
-        };
-        res.push(node);
-      }
-      return res;
-    };
-    Nodes = $resource(CRISMA_ICMM_API + '/nodes', {
-      nodeId: '@id',
-      domain: CRISMA_DOMAIN
-    }, {
-      get: {
-        method: 'GET',
-        params: { deduplicate: true },
-        url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates'
-      },
-      query: {
-        method: 'GET',
-        isArray: true,
-        url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates?limit=100&offset=0&level=1&filter=parentworldstate%3Anull&omitNullValues=false&deduplicate=true',
-        transformResponse: function (data) {
-          return transformResult(data);
-        }
-      },
-      children: {
-        method: 'GET',
-        isArray: true,
-        params: { level: 2 },
-        url: CRISMA_ICMM_API + '/' + CRISMA_DOMAIN + '.worldstates',
-        transformResponse: function (data) {
-          return transformResult(data);
-        },
-        dynamicChildren: {
-          method: 'POST',
-          url: '',
-          transformResult: function (data) {
-            return transformResult(data);
-          }
-        }
-      }
-    });
-    return Nodes;
   }
 ]);

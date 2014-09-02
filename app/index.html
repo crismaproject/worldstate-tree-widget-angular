@@ -38,6 +38,7 @@
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
         <script src="bower_components/dynatree/dist/jquery.dynatree.js"></script>
+        <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
          <!-- ngtemplates adds generated templates -->
@@ -45,7 +46,6 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/directives/catalogue-tree.js"></script>
-        <script src="scripts/services/nodes.js"></script>
         <!-- endbuild -->
 
         <!-- demo only -->
@@ -58,7 +58,7 @@
 
                             $provide.constant('DEBUG', 'true');
                             $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
+                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
                         }
                     ]
                     );

@@ -13,7 +13,7 @@ angular.module(
                 restrict: 'E',
                 link: function postLink(scope, element) {
                     var dynaTreeRootNodes = [], scopeOptionsValue,
-                        dynatreeOptions, deregisterWatch,
+                        dynatreeOptions, deregisterWatch, regardSelection,
                         isInitialized = false,
                         defaultClassNames = {
                             container: 'dynatree-container',
@@ -42,8 +42,8 @@ angular.module(
                             lastsib: 'dynatree-lastsib'
                         },
                         copyDefaultOptions = function () {
-                            var cn = {};
-                            for (var prop in defaultClassNames) {
+                            var cn = {}, prop;
+                            for (prop in defaultClassNames) {
                                 if (defaultClassNames.hasOwnProperty(prop)) {
                                     cn[prop] = defaultClassNames[prop];
                                 }
@@ -163,28 +163,40 @@ angular.module(
                                 dynatreeOptions.onFocus = onFocusCB || null;
                             }
                         };
-                    // when the directive is initialized the nodes array can be empty. 
-                    // This watch listens for changes in the array builds the first level nodes from it.
+                        // when the directive is initialized the nodes array can be empty. 
+                        // This watch listens for changes in the array builds the first level nodes from it.
                     deregisterWatch = scope.$watchCollection('nodes', function (newVal, oldval) {
-                        var j, dynatreeRoot, cidsNode;
+                        var j, k, dynatreeRoot, cidsNode, dynatreeNode, childNode;
                         if (newVal !== oldval) {
-                            scope.selectedNodes.splice(0,scope.selectedNodes.length);
-                            scope.activeNode=undefined;
+//                      scope.selectedNodes.splice(0,scope.selectedNodes.length);
+                            if (scope.selectedNodes && scope.selectedNodes.length > 0) {
+                                regardSelection = true;
+                            }
+                            scope.activeNode = undefined;
                             dynatreeRoot = element.dynatree('getRoot');
                             dynatreeRoot.removeChildren();
                             for (j = 0; j < newVal.length; j++) {
                                 cidsNode = newVal[j];
-                                dynatreeRoot.addChild(creatDynaTreeNode(cidsNode));
+                                dynatreeNode = creatDynaTreeNode(cidsNode);
+                                childNode = dynatreeRoot.addChild(dynatreeNode);
+                                if (regardSelection) {
+                                    for (k = 0; j < scope.selectedNodes.length; k++) {
+                                        if (scope.selectedNodes[k].key === dynatreeNode.cidsNode.key) {
+                                            childNode.toggleSelect();
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     });
 
                     // watch for changes in the option object
                     scope.$watch('options', function (newVal, oldVal) {
-                        var iconChanged = false, value, oldValue, hasChanged,
+                        var iconChanged = false, value, oldValue, hasChanged, key,
                             isNewProp;
                         if (isInitialized) {
-                            for (var key in scope.options) {
+                            for (key in scope.options) {
                                 value = newVal[key];
                                 oldValue = oldVal[key];
                                 hasChanged = value !== oldValue;
@@ -239,7 +251,10 @@ angular.module(
                             var index, selectedCidsObject;
                             selectedCidsObject = node.data.cidsNode;
                             if (selected) {
-                                scope.selectedNodes.push(selectedCidsObject);
+                                //check if the node is not already contained..
+                                if (scope.selectedNodes.indexOf(selectedCidsObject) === -1) {
+                                    scope.selectedNodes.push(selectedCidsObject);
+                                }
                             } else {
                                 index = scope.selectedNodes.indexOf(selectedCidsObject);
                                 if (index >= 0) {
@@ -255,7 +270,7 @@ angular.module(
                             return true;
                         },
                         onLazyRead: function (node) {
-                            var cidsNode, callback, childNode;
+                            var cidsNode, callback, childNode, addedChildNode;
                             cidsNode = node.data.cidsNode;
                             node.data.addClass = 'dynatree-loading';
                             node.render();
@@ -264,7 +279,16 @@ angular.module(
                                 for (i = 0; i < children.length; i++) {
                                     cidsNodeCB = children[i];
                                     childNode = creatDynaTreeNode(cidsNodeCB);
-                                    node.addChild(childNode);
+
+                                    addedChildNode = node.addChild(childNode);
+                                    if (regardSelection) {
+                                        for (var j = 0; j < scope.selectedNodes.length; j++) {
+                                            if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
+                                                addedChildNode.toggleSelect();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 node.data.addClass = '';
                                 /*jshint camelcase: false */
