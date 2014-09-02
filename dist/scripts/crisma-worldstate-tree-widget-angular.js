@@ -32,11 +32,9 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', ['de
     $scope.switchTreeMode = function () {
       $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
     };
-    Nodes.get({ nodeId: 59 }, function (ws59) {
-      Nodes.query(function (data) {
-        $scope.treeSelection = data.slice().concat(ws59);
-        $scope.nodes = data;
-      });
+    $scope.treeSelection = [];
+    Nodes.query(function (data) {
+      $scope.nodes = data;
     });
   }
 ]);
@@ -206,6 +204,23 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
                     break;
                   }
                 }
+              }
+            }
+          }
+        });
+        // it can happen that the selectedNodes array bounded to this directive contains 
+        // the same worldstate object multiple times. This directive still works properly in that case
+        // but we log an error that to propagate this deficiency
+        scope.$watch('selectedNodes', function () {
+          var i, selNode, visitedNode;
+          visitedNode = [];
+          if (scope.selectedNodes) {
+            for (i = 0; i < scope.selectedNodes.length; i++) {
+              selNode = scope.selectedNodes[i];
+              if (visitedNode[selNode.key]) {
+                console.error('The worldstate ' + selNode.key + ' is contained multiple times in the ' + 'selectedNodes property bound to the worldstateTreeWidget. Multiple items ' + 'are ignored by the worldstateTreeWidget but should be avoided');
+              } else {
+                visitedNode[selNode.key] = selNode;
               }
             }
           }
