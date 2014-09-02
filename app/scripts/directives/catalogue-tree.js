@@ -163,8 +163,8 @@ angular.module(
                                 dynatreeOptions.onFocus = onFocusCB || null;
                             }
                         };
-                        // when the directive is initialized the nodes array can be empty. 
-                        // This watch listens for changes in the array builds the first level nodes from it.
+                    // when the directive is initialized the nodes array can be empty. 
+                    // This watch listens for changes in the array builds the first level nodes from it.
                     deregisterWatch = scope.$watchCollection('nodes', function (newVal, oldval) {
                         var j, k, dynatreeRoot, cidsNode, dynatreeNode, childNode;
                         if (newVal !== oldval) {
@@ -186,6 +186,26 @@ angular.module(
                                             break;
                                         }
                                     }
+                                }
+                            }
+                        }
+                    });
+
+                    // it can happen that the selectedNodes array bounded to this directive contains 
+                    // the same worldstate object multiple times. This directive still works properly in that case
+                    // but we log an error that to propagate this deficiency
+                    scope.$watch('selectedNodes', function () {
+                        var i, selNode, visitedNode;
+                        visitedNode = [];
+                        if (scope.selectedNodes) {
+                            for (i = 0; i < scope.selectedNodes.length; i++) {
+                                selNode = scope.selectedNodes[i];
+                                if (visitedNode[selNode.key]) {
+                                    console.error('The worldstate ' + selNode.key + ' is contained multiple times in the ' +
+                                        'selectedNodes property bound to the worldstateTreeWidget. Multiple items ' +
+                                        'are ignored by the worldstateTreeWidget but should be avoided');
+                                } else {
+                                    visitedNode[selNode.key] = selNode;
                                 }
                             }
                         }

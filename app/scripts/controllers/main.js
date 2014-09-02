@@ -3,7 +3,7 @@ angular.module(
     [
         'de.cismet.cids.rest.collidngNames.Nodes'
     ]
-    ).controller(
+).controller(
     'MainCtrl',
     [
         '$scope',
@@ -35,14 +35,11 @@ angular.module(
             $scope.switchTreeMode = function () {
                 $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
             };
-
-            Nodes.get({nodeId: 59}, function (ws59) {
-
-                Nodes.query(function (data) {
-                    $scope.treeSelection = data.slice().concat(ws59);
-                    $scope.nodes = data;
-                });
+            
+            $scope.treeSelection=[];
+            Nodes.query(function (data) {
+                $scope.nodes = data;
             });
         }
     ]
-    );
+);
