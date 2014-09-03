@@ -172,8 +172,13 @@ angular.module(
                             if (scope.selectedNodes && scope.selectedNodes.length > 0) {
                                 regardSelection = true;
                             }
-                            scope.activeNode = undefined;
                             dynatreeRoot = element.dynatree('getRoot');
+                            dynatreeRoot.visit(function (node) {
+                                if (scope.activeNode && node.data.cidsNode.key === scope.activeNode.key) {
+                                    node.deactivate();
+                                    return true;
+                                }
+                            }, false);
                             dynatreeRoot.removeChildren();
                             for (j = 0; j < newVal.length; j++) {
                                 cidsNode = newVal[j];
@@ -210,6 +215,23 @@ angular.module(
                             }
                         }
                     });
+
+                    // watch for changes in the option object
+                    scope.$watch('activeNode', function () {
+                        var nodeActivated;
+                        nodeActivated = false;
+                        element.dynatree('getRoot').visit(function (node) {
+                            if (scope.activeNode && node.data.cidsNode.objectKey === scope.activeNode.objectKey) {
+                                node.activate();
+                                nodeActivated = true;
+                                return true;
+                            }
+                        }, false);
+
+                        if (!nodeActivated) {
+                            console.log('Could not find the activeNode ' + scope.activeNode.objectKey + ' in the tree. Eventually it is a childNode not yet loaded.');
+                        }
+                    }, true);
 
                     // watch for changes in the option object
                     scope.$watch('options', function (newVal, oldVal) {
@@ -287,7 +309,7 @@ angular.module(
                             AngularTools.safeApply(scope);
                             return false;
                         },
-                        onExpand: function (flag,node) {
+                        onExpand: function (flag, node) {
                             node.data.icon = getIcon(node.data.cidsNode.isLeaf, node.isExpanded(), node.data.cidsNode);
                             node.render();
                             return true;
