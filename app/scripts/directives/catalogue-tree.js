@@ -99,7 +99,7 @@ angular.module(
                                 };
 
                             } else {
-                                clickfolderMode = 1;
+//                                clickfolderMode = 1;
                                 cn.selected = 'tree-select';
                                 autoFocus = false;
                                 onClickCB = function (node, event) {
@@ -244,6 +244,9 @@ angular.module(
                                     case 'leafIcon':
                                         iconChanged = true;
                                         break;
+                                    case 'clickFolderMode':
+                                        element.dynatree('option', 'clickFolderMode', value || 3);
+                                        break;
                                     }
                                 }
                             }
@@ -295,14 +298,14 @@ angular.module(
                             node.data.addClass = 'dynatree-loading';
                             node.render();
                             callback = function (children) {
-                                var i, cidsNodeCB;
+                                var i, j, cidsNodeCB;
                                 for (i = 0; i < children.length; i++) {
                                     cidsNodeCB = children[i];
                                     childNode = creatDynaTreeNode(cidsNodeCB);
 
                                     addedChildNode = node.addChild(childNode);
                                     if (regardSelection) {
-                                        for (var j = 0; j < scope.selectedNodes.length; j++) {
+                                        for (j = 0; j < scope.selectedNodes.length; j++) {
                                             if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
                                                 addedChildNode.toggleSelect();
                                                 break;
@@ -337,6 +340,8 @@ angular.module(
                             case 'multiSelection':
                                 registerEventCallbacks(scopeOptionsValue);
                                 break;
+                            case 'clickFolderMode':
+                                dynatreeOptions.clickFolderMode = scopeOptionsValue;
                             }
                         }
                     }
