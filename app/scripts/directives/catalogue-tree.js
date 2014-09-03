@@ -3,7 +3,7 @@ angular.module(
     [
         'de.cismet.commons.angular.angularTools'
     ]
-    ).directive('catalogueTree',
+).directive('catalogueTree',
     [
         'de.cismet.commons.angular.angularTools.AngularTools',
         function (AngularTools) {
@@ -11,7 +11,7 @@ angular.module(
             return {
                 templateUrl: 'templates/catalogue-tree.html',
                 restrict: 'E',
-                link: function postLink (scope, element) {
+                link: function postLink(scope, element) {
                     var dynaTreeRootNodes = [], scopeOptionsValue,
                         dynatreeOptions, deregisterWatch, regardSelection,
                         isInitialized = false,
@@ -41,15 +41,15 @@ angular.module(
                             partsel: 'dynatree-partsel',
                             lastsib: 'dynatree-lastsib'
                         },
-                    copyDefaultOptions = function () {
-                        var cn = {}, prop;
-                        for (prop in defaultClassNames) {
-                            if (defaultClassNames.hasOwnProperty(prop)) {
-                                cn[prop] = defaultClassNames[prop];
+                        copyDefaultOptions = function () {
+                            var cn = {}, prop;
+                            for (prop in defaultClassNames) {
+                                if (defaultClassNames.hasOwnProperty(prop)) {
+                                    cn[prop] = defaultClassNames[prop];
+                                }
                             }
-                        }
-                        return cn;
-                    },
+                            return cn;
+                        },
                         getIcon = function (isLeaf, isExpanded) {
                             var icon;
                             if (isLeaf) {
@@ -223,30 +223,30 @@ angular.module(
                                 isNewProp = value && !oldValue;
                                 if (hasChanged || isNewProp) {
                                     switch (key) {
-                                        case 'checkboxClass':
-                                            element.dynatree('option', 'classNames.checkbox', value);
-                                            break;
-                                        case 'checkboxEnabled':
-                                            element.dynatree('option', 'checkbox', value);
-                                            break;
-                                        case 'imagePath':
-                                            element.dynatree('option', 'imagePath', value);
-                                            break;
-                                        case 'multiSelection':
-                                            registerEventCallbacks(value, true);
-                                            break;
-                                        case 'folderIconClosed':
-                                            iconChanged = true;
-                                            break;
-                                        case 'folderIconOpen':
-                                            iconChanged = true;
-                                            break;
-                                        case 'leafIcon':
-                                            iconChanged = true;
-                                            break;
-                                        case 'clickFolderMode':
-                                            element.dynatree('option', 'clickFolderMode', value || 3);
-                                            break;
+                                    case 'checkboxClass':
+                                        element.dynatree('option', 'classNames.checkbox', value);
+                                        break;
+                                    case 'checkboxEnabled':
+                                        element.dynatree('option', 'checkbox', value);
+                                        break;
+                                    case 'imagePath':
+                                        element.dynatree('option', 'imagePath', value);
+                                        break;
+                                    case 'multiSelection':
+                                        registerEventCallbacks(value, true);
+                                        break;
+                                    case 'folderIconClosed':
+                                        iconChanged = true;
+                                        break;
+                                    case 'folderIconOpen':
+                                        iconChanged = true;
+                                        break;
+                                    case 'leafIcon':
+                                        iconChanged = true;
+                                        break;
+                                    case 'clickFolderMode':
+                                        element.dynatree('option', 'clickFolderMode', value || 3);
+                                        break;
                                     }
                                 }
                             }
@@ -298,14 +298,14 @@ angular.module(
                             node.data.addClass = 'dynatree-loading';
                             node.render();
                             callback = function (children) {
-                                var i, cidsNodeCB;
+                                var i, j, cidsNodeCB;
                                 for (i = 0; i < children.length; i++) {
                                     cidsNodeCB = children[i];
                                     childNode = creatDynaTreeNode(cidsNodeCB);
 
                                     addedChildNode = node.addChild(childNode);
                                     if (regardSelection) {
-                                        for (var j = 0; j < scope.selectedNodes.length; j++) {
+                                        for (j = 0; j < scope.selectedNodes.length; j++) {
                                             if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
                                                 addedChildNode.toggleSelect();
                                                 break;
@@ -328,20 +328,20 @@ angular.module(
                         for (var key in scope.options) {
                             scopeOptionsValue = scope.options[key];
                             switch (key) {
-                                case 'checkboxClass':
-                                    dynatreeOptions.classNames.checkbox = scopeOptionsValue;
-                                    break;
-                                case 'checkboxEnabled':
-                                    dynatreeOptions.checkbox = scopeOptionsValue || false;
-                                    break;
-                                case 'imagePath':
-                                    dynatreeOptions.imagePath = scopeOptionsValue;
-                                    break;
-                                case 'multiSelection':
-                                    registerEventCallbacks(scopeOptionsValue);
-                                    break;
-                                case 'clickFolderMode':
-                                    dynatreeOptions.clickFolderMode = scopeOptionsValue;
+                            case 'checkboxClass':
+                                dynatreeOptions.classNames.checkbox = scopeOptionsValue;
+                                break;
+                            case 'checkboxEnabled':
+                                dynatreeOptions.checkbox = scopeOptionsValue || false;
+                                break;
+                            case 'imagePath':
+                                dynatreeOptions.imagePath = scopeOptionsValue;
+                                break;
+                            case 'multiSelection':
+                                registerEventCallbacks(scopeOptionsValue);
+                                break;
+                            case 'clickFolderMode':
+                                dynatreeOptions.clickFolderMode = scopeOptionsValue;
                             }
                         }
                     }
