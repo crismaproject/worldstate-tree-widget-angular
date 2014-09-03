@@ -122,7 +122,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
                 }
               };
             } else {
-              clickfolderMode = 1;
+              //                                clickfolderMode = 1;
               cn.selected = 'tree-select';
               autoFocus = false;
               onClickCB = function (node, event) {
@@ -257,6 +257,9 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
                 case 'leafIcon':
                   iconChanged = true;
                   break;
+                case 'clickFolderMode':
+                  element.dynatree('option', 'clickFolderMode', value || 3);
+                  break;
                 }
               }
             }
@@ -296,7 +299,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             AngularTools.safeApply(scope);
             return false;
           },
-          onExpand: function (node) {
+          onExpand: function (flag, node) {
             node.data.icon = getIcon(node.data.cidsNode.isLeaf, node.isExpanded(), node.data.cidsNode);
             node.render();
             return true;
@@ -307,13 +310,13 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             node.data.addClass = 'dynatree-loading';
             node.render();
             callback = function (children) {
-              var i, cidsNodeCB;
+              var i, j, cidsNodeCB;
               for (i = 0; i < children.length; i++) {
                 cidsNodeCB = children[i];
                 childNode = creatDynaTreeNode(cidsNodeCB);
                 addedChildNode = node.addChild(childNode);
                 if (regardSelection) {
-                  for (var j = 0; j < scope.selectedNodes.length; j++) {
+                  for (j = 0; j < scope.selectedNodes.length; j++) {
                     if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
                       addedChildNode.toggleSelect();
                       break;
@@ -347,6 +350,8 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             case 'multiSelection':
               registerEventCallbacks(scopeOptionsValue);
               break;
+            case 'clickFolderMode':
+              dynatreeOptions.clickFolderMode = scopeOptionsValue;
             }
           }
         }
