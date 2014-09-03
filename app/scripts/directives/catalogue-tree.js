@@ -284,7 +284,7 @@ angular.module(
                             AngularTools.safeApply(scope);
                             return false;
                         },
-                        onExpand: function (node) {
+                        onExpand: function (flag,node) {
                             node.data.icon = getIcon(node.data.cidsNode.isLeaf, node.isExpanded(), node.data.cidsNode);
                             node.render();
                             return true;
