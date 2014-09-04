@@ -200,21 +200,36 @@ angular.module(
                     // the same worldstate object multiple times. This directive still works properly in that case
                     // but we log an error that to propagate this deficiency
                     scope.$watch('selectedNodes', function () {
-                        var i, selNode, visitedNode;
+                        var i, selNode, visitedNode, nodeSelected, visitSelectFunc;
+                        visitSelectFunc = function (node) {
+                            if (node.data.cidsNode.objectKey === selNode.objectKey) {
+                                node.select();
+                                nodeSelected = true;
+                                return true;
+                            }
+                        };
                         visitedNode = [];
                         if (scope.selectedNodes) {
                             for (i = 0; i < scope.selectedNodes.length; i++) {
                                 selNode = scope.selectedNodes[i];
+                                nodeSelected = false;
                                 if (visitedNode[selNode.key]) {
                                     console.error('The worldstate ' + selNode.key + ' is contained multiple times in the ' +
                                         'selectedNodes property bound to the worldstateTreeWidget. Multiple items ' +
                                         'are ignored by the worldstateTreeWidget but should be avoided');
                                 } else {
                                     visitedNode[selNode.key] = selNode;
+                                    element.dynatree('getRoot').visit(visitSelectFunc, false);
+                                }
+                                if (!nodeSelected && !visitedNode[selNode.key]) {
+                                    console.log('Could not select node' +
+                                        scope.activeNode.objectKey +
+                                        ' because it is not contained in the tree. Eventually it is a childNode not yet loaded.'+
+                                        ' It is selected as soon it is loaded however');
                                 }
                             }
                         }
-                    });
+                    }, true);
 
                     // watch for changes in the option object
                     scope.$watch('activeNode', function () {
@@ -293,11 +308,18 @@ angular.module(
                             AngularTools.safeApply(scope);
                         },
                         onSelect: function (selected, node) {
-                            var index, selectedCidsObject;
+                            var index, selectedCidsObject, isContained;
                             selectedCidsObject = node.data.cidsNode;
+                            isContained = false;
                             if (selected) {
                                 //check if the node is not already contained..
-                                if (scope.selectedNodes.indexOf(selectedCidsObject) === -1) {
+                                scope.selectedNodes.forEach(function (elem) {
+                                    if (elem.objectKey === selectedCidsObject.objectKey) {
+                                        isContained = true;
+                                    }
+                                });
+
+                                if (!isContained) {
                                     scope.selectedNodes.push(selectedCidsObject);
                                 }
                             } else {
