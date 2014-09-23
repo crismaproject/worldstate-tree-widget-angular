@@ -208,6 +208,13 @@ angular.module(
                                 return true;
                             }
                         };
+                        
+                        if (scope.selectedNodes && scope.selectedNodes.length > 0) {
+                            regardSelection = true;
+                        }else{
+                            regardSelection = false;
+                        }
+                        
                         visitedNode = [];
                         if (scope.selectedNodes) {
                             for (i = 0; i < scope.selectedNodes.length; i++) {
