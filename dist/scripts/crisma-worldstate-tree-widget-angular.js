@@ -2,6 +2,45 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget', [
   'de.cismet.crisma.widgets.worldstateTreeWidget.directives',
   'de.cismet.crisma.widgets.worldstateTreeWidget.controllers'
 ]);
+angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', [
+  'de.cismet.cids.rest.collidngNames.Nodes',
+  'de.cismet.crisma.ICMM.Worldstates'
+]).controller('MainCtrl', [
+  '$scope',
+  'de.cismet.collidingNameService.Nodes',
+  function ($scope, Nodes) {
+    'use strict';
+    $scope.activeItem = {};
+    $scope.isWorldstateIcon = false;
+    $scope.treeOptions = {
+      checkboxClass: 'glyphicon glyphicon-unchecked',
+      folderIconClosed: 'icon-folder-close.png',
+      folderIconOpen: 'icon-folder-open.png',
+      leafIcon: 'icon-file.png',
+      imagePath: './images/',
+      multiSelection: true
+    };
+    $scope.switchIcon = function () {
+      if (!$scope.isWorldstateIcon) {
+        $scope.treeOptions.folderIconClosed = 'icon-world.png';
+        $scope.treeOptions.folderIconOpen = 'icon-world.png';
+        $scope.treeOptions.leafIcon = 'icon-world.png';
+      } else {
+        $scope.treeOptions.folderIconClosed = 'icon-folder-close.png';
+        $scope.treeOptions.folderIconOpen = 'icon-folder-open.png';
+        $scope.treeOptions.leafIcon = 'icon-file.png';
+      }
+      $scope.isWorldstateIcon = !$scope.isWorldstateIcon;
+    };
+    $scope.switchTreeMode = function () {
+      $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
+    };
+    $scope.treeSelection = [];
+    Nodes.query(function (data) {
+      $scope.nodes = data;
+    });
+  }
+]);
 angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').controller('de.cismet.crisma.widgets.worldstateTreeWidget.WorldstateTreeCtrl', [
   '$scope',
   'de.cismet.collidingNameService.Nodes',
@@ -145,47 +184,6 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
           $scope.topLevelNodes = data;
         });
       }
-    });
-  }
-]);
-angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers', [
-  'de.cismet.cids.rest.collidngNames.Nodes',
-  'de.cismet.crisma.ICMM.Worldstates'
-]).controller('MainCtrl', [
-  '$scope',
-  'de.cismet.collidingNameService.Nodes',
-  '$timeout',
-  'de.cismet.crisma.ICMM.Worldstates',
-  function ($scope, Nodes, $timeout, Worldstates) {
-    'use strict';
-    $scope.activeItem = {};
-    $scope.isWorldstateIcon = false;
-    $scope.treeOptions = {
-      checkboxClass: 'glyphicon glyphicon-unchecked',
-      folderIconClosed: 'icon-folder-close.png',
-      folderIconOpen: 'icon-folder-open.png',
-      leafIcon: 'icon-file.png',
-      imagePath: './images/',
-      multiSelection: true
-    };
-    $scope.switchIcon = function () {
-      if (!$scope.isWorldstateIcon) {
-        $scope.treeOptions.folderIconClosed = 'icon-world.png';
-        $scope.treeOptions.folderIconOpen = 'icon-world.png';
-        $scope.treeOptions.leafIcon = 'icon-world.png';
-      } else {
-        $scope.treeOptions.folderIconClosed = 'icon-folder-close.png';
-        $scope.treeOptions.folderIconOpen = 'icon-folder-open.png';
-        $scope.treeOptions.leafIcon = 'icon-file.png';
-      }
-      $scope.isWorldstateIcon = !$scope.isWorldstateIcon;
-    };
-    $scope.switchTreeMode = function () {
-      $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
-    };
-    $scope.treeSelection = [];
-    Nodes.query(function (data) {
-      $scope.nodes = data;
     });
   }
 ]);
