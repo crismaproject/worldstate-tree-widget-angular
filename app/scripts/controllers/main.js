@@ -9,9 +9,7 @@ angular.module(
     [
         '$scope',
         'de.cismet.collidingNameService.Nodes',
-        '$timeout',
-        'de.cismet.crisma.ICMM.Worldstates',
-        function ($scope, Nodes, $timeout, Worldstates) {
+        function ($scope, Nodes) {
             'use strict';
             $scope.activeItem = {};
             $scope.isWorldstateIcon = false;
