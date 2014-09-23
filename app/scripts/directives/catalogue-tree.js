@@ -341,10 +341,16 @@ angular.module(
                             cidsNode = node.data.cidsNode;
                             node.data.addClass = 'dynatree-loading';
                             node.render();
+                            /*
+                             * If the entity based Nodes service is used, the keys of the fetched nodes ar
+                             * not correct. Since we already have the path to the root node we update the
+                             * key of the node objects that are loaded..
+                             */
                             callback = function (children) {
                                 var i, j, cidsNodeCB;
                                 for (i = 0; i < children.length; i++) {
                                     cidsNodeCB = children[i];
+                                    cidsNodeCB.key = cidsNode.key+'.'+cidsNodeCB.objectKey.substring(cidsNodeCB.objectKey.lastIndexOf('/')+1,cidsNodeCB.objectKey.length);
                                     childNode = creatDynaTreeNode(cidsNodeCB);
 
                                     addedChildNode = node.addChild(childNode);
