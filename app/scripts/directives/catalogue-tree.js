@@ -202,7 +202,7 @@ angular.module(
                     scope.$watch('selectedNodes', function () {
                         var i, selNode, visitedNode, nodeSelected, visitSelectFunc;
                         visitSelectFunc = function (node) {
-                            if (node.data.cidsNode.objectKey === selNode.objectKey) {
+                            if (node.data.cidsNode.key === selNode.key) {
                                 node.select();
                                 nodeSelected = true;
                                 return true;
@@ -223,7 +223,7 @@ angular.module(
                                 }
                                 if (!nodeSelected && !visitedNode[selNode.key]) {
                                     console.log('Could not select node' +
-                                        scope.activeNode.objectKey +
+                                        scope.activeNode.key +
                                         ' because it is not contained in the tree. Eventually it is a childNode not yet loaded.'+
                                         ' It is selected as soon it is loaded however');
                                 }
@@ -236,7 +236,7 @@ angular.module(
                         var nodeActivated;
                         nodeActivated = false;
                         element.dynatree('getRoot').visit(function (node) {
-                            if (scope.activeNode && node.data.cidsNode.objectKey === scope.activeNode.objectKey) {
+                            if (scope.activeNode && node.data.cidsNode.key === scope.activeNode.key) {
                                 node.activate();
                                 nodeActivated = true;
                                 return true;
@@ -244,7 +244,7 @@ angular.module(
                         }, false);
 
                         if (!nodeActivated) {
-                            console.log('Could not find the activeNode ' + scope.activeNode.objectKey + ' in the tree. Eventually it is a childNode not yet loaded.');
+                            console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Eventually it is a childNode not yet loaded.');
                         }
                     }, true);
 
@@ -314,7 +314,7 @@ angular.module(
                             if (selected) {
                                 //check if the node is not already contained..
                                 scope.selectedNodes.forEach(function (elem) {
-                                    if (elem.objectKey === selectedCidsObject.objectKey) {
+                                    if (elem.key === selectedCidsObject.key) {
                                         isContained = true;
                                     }
                                 });
@@ -402,10 +402,10 @@ angular.module(
                 scope: {
                     nodes: '=',
                     selectedNodes: '=selection',
+                    selectedW: '=selection',
                     activeNode: '=?',
                     options: '=?'
                 }
             };
         }
-    ]
-    );
+    ]);
