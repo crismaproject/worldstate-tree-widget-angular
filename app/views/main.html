@@ -18,7 +18,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-            <catalogue-tree class="catalagoue-tree" options="treeOptions" nodes="nodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>
+            <!--<catalogue-tree class="catalagoue-tree" options="treeOptions" nodes="nodes" selection="treeSelection" active-node="activeItem"></catalogue-tree>-->
+            <worldstate-tree class="catalagoue-tree" options="treeOptions"  selected-worldstates="treeSelection" active-worldstate="activeItem"></worldstate-tree>
             <span class="mouseIcon label label-info"  ng-click="switchTreeMode()">
                 <span ng-hide="treeOptions.multiSelection">show</span> 
                 <span ng-hide="!treeOptions.multiSelection">hide</span> checkboxes</span>
@@ -41,6 +42,7 @@
                     <ul>
                         <li ng-repeat="worldstate in treeSelection">
                             <p>{{worldstate.object.id}} - {{worldstate.name}} </p>
+                            <p>{{worldstate|json}} </p>
                         </li>
                     </ul>
                 </div>

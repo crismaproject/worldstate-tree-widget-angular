@@ -202,12 +202,19 @@ angular.module(
                     scope.$watch('selectedNodes', function () {
                         var i, selNode, visitedNode, nodeSelected, visitSelectFunc;
                         visitSelectFunc = function (node) {
-                            if (node.data.cidsNode.objectKey === selNode.objectKey) {
+                            if (node.data.cidsNode.key === selNode.key) {
                                 node.select();
                                 nodeSelected = true;
                                 return true;
                             }
                         };
+                        
+                        if (scope.selectedNodes && scope.selectedNodes.length > 0) {
+                            regardSelection = true;
+                        }else{
+                            regardSelection = false;
+                        }
+                        
                         visitedNode = [];
                         if (scope.selectedNodes) {
                             for (i = 0; i < scope.selectedNodes.length; i++) {
@@ -223,7 +230,7 @@ angular.module(
                                 }
                                 if (!nodeSelected && !visitedNode[selNode.key]) {
                                     console.log('Could not select node' +
-                                        scope.activeNode.objectKey +
+                                        scope.activeNode.key +
                                         ' because it is not contained in the tree. Eventually it is a childNode not yet loaded.'+
                                         ' It is selected as soon it is loaded however');
                                 }
@@ -236,7 +243,7 @@ angular.module(
                         var nodeActivated;
                         nodeActivated = false;
                         element.dynatree('getRoot').visit(function (node) {
-                            if (scope.activeNode && node.data.cidsNode.objectKey === scope.activeNode.objectKey) {
+                            if (scope.activeNode && node.data.cidsNode.key === scope.activeNode.key) {
                                 node.activate();
                                 nodeActivated = true;
                                 return true;
@@ -244,7 +251,7 @@ angular.module(
                         }, false);
 
                         if (!nodeActivated) {
-                            console.log('Could not find the activeNode ' + scope.activeNode.objectKey + ' in the tree. Eventually it is a childNode not yet loaded.');
+                            console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Eventually it is a childNode not yet loaded.');
                         }
                     }, true);
 
@@ -314,7 +321,7 @@ angular.module(
                             if (selected) {
                                 //check if the node is not already contained..
                                 scope.selectedNodes.forEach(function (elem) {
-                                    if (elem.objectKey === selectedCidsObject.objectKey) {
+                                    if (elem.key === selectedCidsObject.key) {
                                         isContained = true;
                                     }
                                 });
@@ -341,10 +348,16 @@ angular.module(
                             cidsNode = node.data.cidsNode;
                             node.data.addClass = 'dynatree-loading';
                             node.render();
+                            /*
+                             * If the entity based Nodes service is used, the keys of the fetched nodes ar
+                             * not correct. Since we already have the path to the root node we update the
+                             * key of the node objects that are loaded..
+                             */
                             callback = function (children) {
                                 var i, j, cidsNodeCB;
                                 for (i = 0; i < children.length; i++) {
                                     cidsNodeCB = children[i];
+                                    cidsNodeCB.key = cidsNode.key+'.'+cidsNodeCB.objectKey.substring(cidsNodeCB.objectKey.lastIndexOf('/')+1,cidsNodeCB.objectKey.length);
                                     childNode = creatDynaTreeNode(cidsNodeCB);
 
                                     addedChildNode = node.addChild(childNode);
@@ -396,10 +409,10 @@ angular.module(
                 scope: {
                     nodes: '=',
                     selectedNodes: '=selection',
+                    selectedW: '=selection',
                     activeNode: '=?',
                     options: '=?'
                 }
             };
         }
-    ]
-    );
+    ]);

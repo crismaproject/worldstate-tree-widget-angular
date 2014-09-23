@@ -7,4 +7,11 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives').run([
     "</div>"
   );
 
+
+  $templateCache.put('templates/worldstate-tree.html',
+    "<div >\n" +
+    "    <catalogue-tree class=\"catalagoue-tree\" options=\"options\" nodes=\"topLevelNodes\" selection=\"selectedNodes\" active-node=\"activeNode\"></catalogue-tree>\n" +
+    "</div>"
+  );
+
 }]);

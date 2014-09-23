@@ -149,7 +149,7 @@ module.exports = function (grunt) {
     // but still available if needed
     concat: {
       dist: {
-          src: '<%= yeoman.app %>/scripts/**/*.js',
+          src: ['<%= yeoman.app %>/scripts/app.js','<%= yeoman.app %>/scripts/controllers/main.js','<%= yeoman.app %>/directives/catalogue-tree.js','<%= yeoman.app %>/scripts/**/*.js'],
           dest: '<%= yeoman.dist %>/scripts/crisma-worldstate-tree-widget-angular.js'
       }
     },
@@ -445,7 +445,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     'jshint',
-    'test',
+//    'test',
     'build'
   ]);
 };

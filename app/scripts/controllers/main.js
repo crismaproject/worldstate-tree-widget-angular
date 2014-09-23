@@ -1,7 +1,8 @@
 angular.module(
     'de.cismet.crisma.widgets.worldstateTreeWidget.controllers',
     [
-        'de.cismet.cids.rest.collidngNames.Nodes'
+        'de.cismet.cids.rest.collidngNames.Nodes',
+        'de.cismet.crisma.ICMM.Worldstates'
     ]
 ).controller(
     'MainCtrl',
@@ -35,8 +36,8 @@ angular.module(
             $scope.switchTreeMode = function () {
                 $scope.treeOptions.multiSelection = !$scope.treeOptions.multiSelection;
             };
-            
-            $scope.treeSelection=[];
+
+            $scope.treeSelection = [];
             Nodes.query(function (data) {
                 $scope.nodes = data;
             });
