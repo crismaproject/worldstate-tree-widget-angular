@@ -49,6 +49,8 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
   function ($scope, Nodes, Worldstates, $q) {
     'use strict';
     var activeWorldstateWatchChanged, selectedWorldstateWatchChanged;
+    activeWorldstateWatchChanged = false;
+    selectedWorldstateWatchChanged = false;
     function getNodeKeyForWorldstate(ws) {
       var defer;
       defer = $q.defer();
@@ -89,11 +91,11 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
     $scope.activeNode = {};
     $scope.$watch('activeNode', function (newVal, oldVal) {
       var id;
-      if (newVal !== oldVal) {
-        if (activeWorldstateWatchChanged) {
-          activeWorldstateWatchChanged = false;
-          return;
-        }
+      if (activeWorldstateWatchChanged) {
+        activeWorldstateWatchChanged = false;
+        return;
+      }
+      if (!angular.equals(newVal, oldVal)) {
         id = $scope.activeNode.objectKey;
         id = id.substring(id.lastIndexOf('/') + 1, id.length);
         Worldstates.get({
@@ -109,7 +111,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
              * outer scope or from the activeNode watch.
              */
     $scope.$watch('activeWorldstate', function (newVal, oldVal) {
-      if (newVal !== oldVal) {
+      if (!angular.equals(newVal, oldVal)) {
         getNodeForWorldState($scope.activeWorldstate).then(function (node) {
           activeWorldstateWatchChanged = true;
           $scope.activeNode = node;
@@ -127,25 +129,30 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
     $scope.selectedNodes = [];
     $scope.$watch('selectedNodes', function (newVal, oldVal) {
       var i, newSelectedWorldstates, id;
-      if (newVal !== oldVal) {
-        if (selectedWorldstateWatchChanged) {
-          selectedWorldstateWatchChanged = false;
-          return;
-        }
-        newSelectedWorldstates = [];
-        for (i = 0; i < $scope.selectedNodes.length; i++) {
-          id = $scope.selectedNodes[i].objectKey;
-          id = id.substring(id.lastIndexOf('/') + 1, id.length);
-          /*jshint -W083 */
-          Worldstates.get({
-            wsId: id,
-            level: 2
-          }, function (worldstate) {
-            newSelectedWorldstates.push(worldstate);
-            if (newSelectedWorldstates.length === $scope.selectedNodes.length) {
-              $scope.selectedWorldstates = newSelectedWorldstates;
-            }
-          });
+      if (selectedWorldstateWatchChanged && angular.equals(newVal, oldVal)) {
+        selectedWorldstateWatchChanged = false;
+        return;
+      }
+      if (!angular.equals(newVal, oldVal)) {
+        //if the selectedNodes array is empty we must empty the selectedWorldstates array
+        if (newVal.length === 0) {
+          $scope.selectedWorldstates.splice(0, $scope.selectedWorldstates.length);
+        } else {
+          newSelectedWorldstates = [];
+          for (i = 0; i < $scope.selectedNodes.length; i++) {
+            id = $scope.selectedNodes[i].objectKey;
+            id = id.substring(id.lastIndexOf('/') + 1, id.length);
+            /*jshint -W083 */
+            Worldstates.get({
+              wsId: id,
+              level: 2
+            }, function (worldstate) {
+              newSelectedWorldstates.push(worldstate);
+              if (newSelectedWorldstates.length === $scope.selectedNodes.length) {
+                $scope.selectedWorldstates = newSelectedWorldstates;
+              }
+            });
+          }
         }
       }
     }, true);
@@ -153,19 +160,21 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
              * the  selectedWorldstate array can change when the object was changed in scope outside
              * the directive or from the selectedNodes watch.
              */
-    $scope.$watchCollection('selectedWorldstates', function (newVal, oldVal) {
+    $scope.$watch('selectedWorldstates', function (newVal, oldVal) {
       var i, newSelectedNodes;
-      if (newVal !== oldVal) {
+      if (!angular.equals(newVal, oldVal)) {
         newSelectedNodes = [];
         for (i = 0; i < $scope.selectedWorldstates.length; i++) {
           newSelectedNodes.push(getNodeForWorldState($scope.selectedWorldstates[i]));
         }
         $q.all(newSelectedNodes).then(function (selectedNodes) {
-          selectedWorldstateWatchChanged = true;
+          if (!angular.equals(selectedNodes, $scope.selectedNodes)) {
+            selectedWorldstateWatchChanged = true;
+          }
           $scope.selectedNodes = selectedNodes;
         });
       }
-    });
+    }, true);
     /*
              * We need to fetch the top level worldstates of the tree 
              * and convert them to nodes.
@@ -366,7 +375,7 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
         // the same worldstate object multiple times. This directive still works properly in that case
         // but we log an error that to propagate this deficiency
         scope.$watch('selectedNodes', function () {
-          var i, selNode, visitedNode, nodeSelected, visitSelectFunc;
+          var i, selNode, visitedNode, nodeSelected, visitSelectFunc, visitDeselectFunc;
           visitSelectFunc = function (node) {
             if (node.data.cidsNode.key === selNode.key) {
               node.select();
@@ -374,10 +383,17 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
               return true;
             }
           };
+          visitDeselectFunc = function (node) {
+            if (node.isSelected()) {
+              node.select(false);
+              return true;
+            }
+          };
           if (scope.selectedNodes && scope.selectedNodes.length > 0) {
             regardSelection = true;
           } else {
             regardSelection = false;
+            element.dynatree('getRoot').visit(visitDeselectFunc, false);
           }
           visitedNode = [];
           if (scope.selectedNodes) {
@@ -483,7 +499,12 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
                 scope.selectedNodes.push(selectedCidsObject);
               }
             } else {
-              index = scope.selectedNodes.indexOf(selectedCidsObject);
+              index = -1;
+              scope.selectedNodes.forEach(function (elem, i) {
+                if (elem.key === selectedCidsObject.key) {
+                  index = i;
+                }
+              });
               if (index >= 0) {
                 scope.selectedNodes.splice(index, 1);
               }
