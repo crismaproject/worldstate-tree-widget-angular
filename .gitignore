@@ -3,6 +3,7 @@ node_modules
 dist/*
 !dist/scripts
 !dist/styles
+!dist/images
 .tmp
 .sass-cache
 app/bower_components
