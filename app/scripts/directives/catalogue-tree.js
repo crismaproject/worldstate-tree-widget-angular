@@ -200,11 +200,17 @@ angular.module(
                     // the same worldstate object multiple times. This directive still works properly in that case
                     // but we log an error that to propagate this deficiency
                     scope.$watch('selectedNodes', function () {
-                        var i, selNode, visitedNode, nodeSelected, visitSelectFunc;
+                        var i, selNode, visitedNode, nodeSelected, visitSelectFunc,visitDeselectFunc;
                         visitSelectFunc = function (node) {
                             if (node.data.cidsNode.key === selNode.key) {
                                 node.select();
                                 nodeSelected = true;
+                                return true;
+                            }
+                        };
+                        visitDeselectFunc = function (node) {
+                            if (node.isSelected()) {
+                                node.select(false);
                                 return true;
                             }
                         };
@@ -213,6 +219,7 @@ angular.module(
                             regardSelection = true;
                         }else{
                             regardSelection = false;
+                            element.dynatree('getRoot').visit(visitDeselectFunc, false);
                         }
                         
                         visitedNode = [];
@@ -330,9 +337,14 @@ angular.module(
                                     scope.selectedNodes.push(selectedCidsObject);
                                 }
                             } else {
-                                index = scope.selectedNodes.indexOf(selectedCidsObject);
-                                if (index >= 0) {
-                                    scope.selectedNodes.splice(index, 1);
+                                index=-1;
+                                scope.selectedNodes.forEach(function (elem,i) {
+                                    if (elem.key === selectedCidsObject.key) {
+                                        index = i;
+                                    }
+                                });
+                                if (index >=0) {
+                                    scope.selectedNodes.splice(index,1);
                                 }
                             }
                             AngularTools.safeApply(scope);
