@@ -219,7 +219,7 @@ angular.module(
                             regardSelection = true;
                         }else{
                             regardSelection = false;
-                             element.dynatree('getRoot').visit(visitDeselectFunc, false);
+                            element.dynatree('getRoot').visit(visitDeselectFunc, false);
                         }
                         
                         visitedNode = [];
@@ -338,7 +338,7 @@ angular.module(
                                 }
                             } else {
                                 index=-1;
-                                 scope.selectedNodes.forEach(function (elem,i) {
+                                scope.selectedNodes.forEach(function (elem,i) {
                                     if (elem.key === selectedCidsObject.key) {
                                         index = i;
                                     }

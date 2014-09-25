@@ -1,6 +1,6 @@
 angular.module(
     'de.cismet.crisma.widgets.worldstateTreeWidget.controllers'
-    ).controller(
+).controller(
     'de.cismet.crisma.widgets.worldstateTreeWidget.WorldstateTreeCtrl',
     [
         '$scope',
@@ -10,9 +10,10 @@ angular.module(
         function ($scope, Nodes, Worldstates, $q) {
             'use strict';
             var activeWorldstateWatchChanged, selectedWorldstateWatchChanged;
-            activeWorldstateWatchChanged=false;
-            selectedWorldstateWatchChanged=false;
-            function getNodeKeyForWorldstate (ws) {
+            activeWorldstateWatchChanged = false;
+            selectedWorldstateWatchChanged = false;
+
+            function getNodeKeyForWorldstate(ws) {
                 var defer;
                 defer = $q.defer();
                 Worldstates.get(
@@ -22,20 +23,21 @@ angular.module(
                         field: 'parentworldstate,id',
                         deduplicate: true
                     },
-                function (parents) {
-                    var key;
-                    key = parents.id;
-                    while (parents.parentworldstate) {
-                        parents = parents.parentworldstate;
-                        key += '.' + parents.id;
+                    function (parents) {
+                        var key;
+                        key = parents.id;
+                        while (parents.parentworldstate) {
+                            parents = parents.parentworldstate;
+                            key += '.' + parents.id;
+                        }
+                        key = '' + key;
+                        defer.resolve(key.split('.').reverse().join('.'));
                     }
-                    key = '' + key;
-                    defer.resolve(key.split('.').reverse().join('.'));
-                });
+                );
                 return defer.promise;
             }
 
-            function getNodeForWorldState (ws) {
+            function getNodeForWorldState(ws) {
                 var def = $q.defer();
 
                 getNodeKeyForWorldstate(ws).then(function (key) {
@@ -96,14 +98,14 @@ angular.module(
             $scope.$watch('selectedNodes', function (newVal, oldVal) {
                 var i, newSelectedWorldstates, id;
                 if (selectedWorldstateWatchChanged && angular.equals(newVal, oldVal)) {
-                        selectedWorldstateWatchChanged = false;
-                        return;
-                    }
+                    selectedWorldstateWatchChanged = false;
+                    return;
+                }
                 if (!angular.equals(newVal, oldVal)) {
                     //if the selectedNodes array is empty we must empty the selectedWorldstates array
-                    if(newVal.length===0){
-                        $scope.selectedWorldstates.splice(0,$scope.selectedWorldstates.length);
-                    }else{
+                    if (newVal.length === 0) {
+                        $scope.selectedWorldstates.splice(0, $scope.selectedWorldstates.length);
+                    } else {
                         newSelectedWorldstates = [];
                         for (i = 0; i < $scope.selectedNodes.length; i++) {
                             id = $scope.selectedNodes[i].objectKey;
@@ -112,7 +114,7 @@ angular.module(
                             Worldstates.get({wsId: id, level: 2}, function (worldstate) {
                                 newSelectedWorldstates.push(worldstate);
                                 if (newSelectedWorldstates.length === $scope.selectedNodes.length) {
-                                    $scope.selectedWorldstates=newSelectedWorldstates;
+                                    $scope.selectedWorldstates = newSelectedWorldstates;
                                 }
                             });
                         }
@@ -132,13 +134,13 @@ angular.module(
                         newSelectedNodes.push(getNodeForWorldState($scope.selectedWorldstates[i]));
                     }
                     $q.all(newSelectedNodes).then(function (selectedNodes) {
-                        if(!angular.equals(selectedNodes,$scope.selectedNodes)){
+                        if (!angular.equals(selectedNodes, $scope.selectedNodes)) {
                             selectedWorldstateWatchChanged = true;
                         }
                         $scope.selectedNodes = selectedNodes;
                     });
                 }
-            },true);
+            }, true);
 
             /*
              * We need to fetch the top level worldstates of the tree 
@@ -159,4 +161,4 @@ angular.module(
 
         }
     ]
-    );
+);
