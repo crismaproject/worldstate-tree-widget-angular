@@ -200,11 +200,17 @@ angular.module(
                     // the same worldstate object multiple times. This directive still works properly in that case
                     // but we log an error that to propagate this deficiency
                     scope.$watch('selectedNodes', function () {
-                        var i, selNode, visitedNode, nodeSelected, visitSelectFunc;
+                        var i, selNode, visitedNode, nodeSelected, visitSelectFunc,visitDeselectFunc;
                         visitSelectFunc = function (node) {
                             if (node.data.cidsNode.key === selNode.key) {
                                 node.select();
                                 nodeSelected = true;
+                                return true;
+                            }
+                        };
+                        visitDeselectFunc = function (node) {
+                            if (node.isSelected()) {
+                                node.select(false);
                                 return true;
                             }
                         };
@@ -213,6 +219,7 @@ angular.module(
                             regardSelection = true;
                         }else{
                             regardSelection = false;
+                             element.dynatree('getRoot').visit(visitDeselectFunc, false);
                         }
                         
                         visitedNode = [];
