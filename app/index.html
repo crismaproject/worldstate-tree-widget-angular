@@ -22,7 +22,7 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div class="container" ng-include="'views/main.html'" ng-controller="MainCtrl"></div>
+        <div class="container" ng-include="'views/main.html'" ></div>
 
 
         <!--[if lt IE 9]>
@@ -60,7 +60,7 @@
 
                             $provide.constant('DEBUG', 'true');
                             $provide.constant('CRISMA_DOMAIN', 'CRISMA');
-                            $provide.constant('CRISMA_ICMM_API', 'http://localhost:8890');
+                            $provide.constant('CRISMA_ICMM_API', 'http://crisma.cismet.de/icmm_api');
                         }
                     ]
                     );
