@@ -330,9 +330,14 @@ angular.module(
                                     scope.selectedNodes.push(selectedCidsObject);
                                 }
                             } else {
-                                index = scope.selectedNodes.indexOf(selectedCidsObject);
-                                if (index >= 0) {
-                                    scope.selectedNodes.splice(index, 1);
+                                index=-1;
+                                 scope.selectedNodes.forEach(function (elem,i) {
+                                    if (elem.key === selectedCidsObject.key) {
+                                        index = i;
+                                    }
+                                });
+                                if (index >=0) {
+                                    scope.selectedNodes.splice(index,1);
                                 }
                             }
                             AngularTools.safeApply(scope);
