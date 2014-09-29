@@ -1,6 +1,6 @@
 angular.module(
     'de.cismet.crisma.widgets.worldstateTreeWidget.controllers'
-).controller(
+    ).controller(
     'de.cismet.crisma.widgets.worldstateTreeWidget.WorldstateTreeCtrl',
     [
         '$scope',
@@ -118,6 +118,9 @@ angular.module(
                                 }
                             });
                         }
+                        $q.all(newSelectedWorldstates).then(function (worldstates) {
+                            $scope.selectedWorldstates = worldstates;
+                        });
                     }
                 }
             }, true);
@@ -161,4 +164,4 @@ angular.module(
 
         }
     ]
-);
+    );

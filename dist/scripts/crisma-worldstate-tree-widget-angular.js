@@ -153,6 +153,9 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.controllers').cont
               }
             });
           }
+          $q.all(newSelectedWorldstates).then(function (worldstates) {
+            $scope.selectedWorldstates = worldstates;
+          });
         }
       }
     }, true);
@@ -375,42 +378,35 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
         // the same worldstate object multiple times. This directive still works properly in that case
         // but we log an error that to propagate this deficiency
         scope.$watch('selectedNodes', function () {
-          var i, selNode, visitedNode, nodeSelected, visitSelectFunc, visitDeselectFunc;
+          var visitSelectFunc;
           visitSelectFunc = function (node) {
-            if (node.data.cidsNode.key === selNode.key) {
-              node.select();
-              nodeSelected = true;
-              return true;
+            //check if node is contained in the selectedNodes arry
+            var containedInSelectedWorldstates;
+            containedInSelectedWorldstates = false;
+            if (scope.selectedNodes) {
+              scope.selectedNodes.forEach(function (item) {
+                if (node.data.cidsNode.key === item.key) {
+                  containedInSelectedWorldstates = true;
+                }
+              });
             }
-          };
-          visitDeselectFunc = function (node) {
-            if (node.isSelected()) {
-              node.select(false);
-              return true;
+            if (containedInSelectedWorldstates) {
+              if (!node.isSelected()) {
+                node.select();
+              }
+            } else {
+              if (node.isSelected()) {
+                node.select(false);
+              }
             }
           };
           if (scope.selectedNodes && scope.selectedNodes.length > 0) {
             regardSelection = true;
           } else {
             regardSelection = false;
-            element.dynatree('getRoot').visit(visitDeselectFunc, false);
           }
-          visitedNode = [];
-          if (scope.selectedNodes) {
-            for (i = 0; i < scope.selectedNodes.length; i++) {
-              selNode = scope.selectedNodes[i];
-              nodeSelected = false;
-              if (visitedNode[selNode.key]) {
-                console.error('The worldstate ' + selNode.key + ' is contained multiple times in the ' + 'selectedNodes property bound to the worldstateTreeWidget. Multiple items ' + 'are ignored by the worldstateTreeWidget but should be avoided');
-              } else {
-                visitedNode[selNode.key] = selNode;
-                element.dynatree('getRoot').visit(visitSelectFunc, false);
-              }
-              if (!nodeSelected && !visitedNode[selNode.key]) {
-                console.log('Could not select node' + scope.activeNode.key + ' because it is not contained in the tree. Eventually it is a childNode not yet loaded.' + ' It is selected as soon it is loaded however');
-              }
-            }
-          }
+          // iterate through the tree Nodes and select / deselect nodes according to the selectedWorldstates arr  
+          element.dynatree('getRoot').visit(visitSelectFunc, false);
         }, true);
         // watch for changes in the option object
         scope.$watch('activeNode', function () {
@@ -424,7 +420,8 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
             }
           }, false);
           if (!nodeActivated) {
-            console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Eventually it is a childNode not yet loaded.');
+            element.dynatree('getTree').getActiveNode().deactivate();
+            console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Maybe it is a childNode not yet loaded. Clearing active node in the tree');
           }
         }, true);
         // watch for changes in the option object
@@ -534,6 +531,9 @@ angular.module('de.cismet.crisma.widgets.worldstateTreeWidget.directives', ['de.
                 cidsNodeCB.key = cidsNode.key + '.' + cidsNodeCB.objectKey.substring(cidsNodeCB.objectKey.lastIndexOf('/') + 1, cidsNodeCB.objectKey.length);
                 childNode = creatDynaTreeNode(cidsNodeCB);
                 addedChildNode = node.addChild(childNode);
+                if (scope.activeNode && scope.activeNode.key && childNode.cidsNode.key === scope.activeNode.key) {
+                  addedChildNode.activateSilently();
+                }
                 if (regardSelection) {
                   for (j = 0; j < scope.selectedNodes.length; j++) {
                     if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
