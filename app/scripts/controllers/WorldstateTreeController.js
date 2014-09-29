@@ -24,14 +24,14 @@ angular.module(
                         deduplicate: true
                     },
                     function (parents) {
-                    var key;
-                    key = parents.id;
-                    while (parents.parentworldstate) {
-                        parents = parents.parentworldstate;
-                        key += '.' + parents.id;
-                    }
-                    key = '' + key;
-                    defer.resolve(key.split('.').reverse().join('.'));
+                        var key;
+                        key = parents.id;
+                        while (parents.parentworldstate) {
+                            parents = parents.parentworldstate;
+                            key += '.' + parents.id;
+                        }
+                        key = '' + key;
+                        defer.resolve(key.split('.').reverse().join('.'));
                     }
                 );
                 return defer.promise;
