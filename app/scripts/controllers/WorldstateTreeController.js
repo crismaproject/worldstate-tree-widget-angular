@@ -1,6 +1,6 @@
 angular.module(
     'de.cismet.crisma.widgets.worldstateTreeWidget.controllers'
-).controller(
+    ).controller(
     'de.cismet.crisma.widgets.worldstateTreeWidget.WorldstateTreeCtrl',
     [
         '$scope',
@@ -24,14 +24,14 @@ angular.module(
                         deduplicate: true
                     },
                     function (parents) {
-                        var key;
-                        key = parents.id;
-                        while (parents.parentworldstate) {
-                            parents = parents.parentworldstate;
-                            key += '.' + parents.id;
-                        }
-                        key = '' + key;
-                        defer.resolve(key.split('.').reverse().join('.'));
+                    var key;
+                    key = parents.id;
+                    while (parents.parentworldstate) {
+                        parents = parents.parentworldstate;
+                        key += '.' + parents.id;
+                    }
+                    key = '' + key;
+                    defer.resolve(key.split('.').reverse().join('.'));
                     }
                 );
                 return defer.promise;
@@ -118,6 +118,9 @@ angular.module(
                                 }
                             });
                         }
+                        $q.all(newSelectedWorldstates).then(function (worldstates) {
+                            $scope.selectedWorldstates = worldstates;
+                        });
                     }
                 }
             }, true);
@@ -161,4 +164,4 @@ angular.module(
 
         }
     ]
-);
+    );
