@@ -248,7 +248,7 @@ angular.module(
 
                         if (!nodeActivated) {
                             element.dynatree('getTree').getActiveNode().deactivate();
-                        console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Maybe it is a childNode not yet loaded. Clearing active node in the tree');
+                            console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Maybe it is a childNode not yet loaded. Clearing active node in the tree');
                         }
                     }, true);
 
@@ -363,6 +363,9 @@ angular.module(
                                     childNode = creatDynaTreeNode(cidsNodeCB);
 
                                     addedChildNode = node.addChild(childNode);
+                                    if (scope.activeNode && scope.activeNode.key && childNode.cidsNode.key === scope.activeNode.key) {
+                                        addedChildNode.activateSilently();
+                                    }
                                     if (regardSelection) {
                                         for (j = 0; j < scope.selectedNodes.length; j++) {
                                             if (scope.selectedNodes[j].key === childNode.cidsNode.key) {
