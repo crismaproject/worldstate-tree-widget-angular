@@ -236,7 +236,7 @@ angular.module(
                                     element.dynatree('getRoot').visit(visitSelectFunc, false);
                                 }
                                 if (!nodeSelected && !visitedNode[selNode.key]) {
-                                    console.log('Could not select node' +
+                                    console.error('Could not select node' +
                                         scope.activeNode.key +
                                         ' because it is not contained in the tree. Eventually it is a childNode not yet loaded.'+
                                         ' It is selected as soon it is loaded however');
