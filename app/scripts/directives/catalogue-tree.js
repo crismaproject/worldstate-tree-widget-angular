@@ -247,7 +247,9 @@ angular.module(
                         }, false);
 
                         if (!nodeActivated) {
-                            element.dynatree('getTree').getActiveNode().deactivate();
+                            if(element.dynatree('getTree').getActiveNode()){
+                                element.dynatree('getTree').getActiveNode().deactivate();
+                            }
                             console.log('Could not find the activeNode ' + scope.activeNode.key + ' in the tree. Maybe it is a childNode not yet loaded. Clearing active node in the tree');
                         }
                     }, true);
