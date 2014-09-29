@@ -115,9 +115,7 @@ angular.module(
                         }
                         $q.all(newSelectedWorldstates).then(function (worldstates) {
                             $scope.selectedWorldstates = worldstates;
-                        }).catch(function(){
-                        console.log('foo');
-                    });
+                        });
                     }
                 }
             }, true);
@@ -138,8 +136,6 @@ angular.module(
                             selectedWorldstateWatchChanged = true;
                         }
                         $scope.selectedNodes = selectedNodes;
-                    }).catch(function(){
-                        console.log('foo');
                     });
                 }
             }, true);
