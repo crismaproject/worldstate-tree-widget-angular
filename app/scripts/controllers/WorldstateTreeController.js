@@ -111,12 +111,7 @@ angular.module(
                             id = $scope.selectedNodes[i].objectKey;
                             id = id.substring(id.lastIndexOf('/') + 1, id.length);
                             /*jshint -W083 */
-                            Worldstates.get({wsId: id, level: 2}, function (worldstate) {
-                                newSelectedWorldstates.push(worldstate);
-                                if (newSelectedWorldstates.length === $scope.selectedNodes.length) {
-                                    $scope.selectedWorldstates = newSelectedWorldstates;
-                                }
-                            });
+                            newSelectedWorldstates.push(Worldstates.get({wsId: id, level: 2}).$promise);
                         }
                         $q.all(newSelectedWorldstates).then(function (worldstates) {
                             $scope.selectedWorldstates = worldstates;
