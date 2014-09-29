@@ -1,6 +1,6 @@
 {
   "name": "crisma-worldstate-tree-widget-angular",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "ignore": [
     ".*",
     "app",
