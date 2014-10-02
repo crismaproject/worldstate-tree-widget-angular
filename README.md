@@ -45,7 +45,7 @@ angular.module(
 Put the directive in your html, provide the constants and bind your model to the selected and active items. The options are used for initialising the tree.
 
 ### options
-```json
+```javascript
 $scope.treeOptions = {
   checkboxClass: 'glyphicon glyphicon-unchecked', // the css class that shall be used for the checkbox (if rendered)
   folderIconClosed: 'path/to/my/icon.png',        // icon that shall be used if a folder in the tree is closed (not expanded), relative to imagePath
