@@ -7,7 +7,7 @@ The AngularJS implementation of the Worldstate Tree Widget Functional Building B
 
 ## Get started
 
-Simply pull in the libraries and all its dependencies via [bower](http://bower.io/)
+Simply pull in the libraries and all the dependencies via [bower](http://bower.io/)
 
 ```sh
   bower install --save crisma-worldstate-tree-widget-angular
@@ -61,3 +61,10 @@ array of worldstate objects
 
 ### active-worldstate
 single worldstate object
+
+## demo
+Simply checkout the project and put the app folder in your favourite web server, or even more simple, use grunt to fire up a web server for you
+
+```sh
+grunt serve
+```
