@@ -185,7 +185,7 @@ angular.module(
                                 dynatreeNode = creatDynaTreeNode(cidsNode);
                                 childNode = dynatreeRoot.addChild(dynatreeNode);
                                 if (regardSelection) {
-                                    for (k = 0; j < scope.selectedNodes.length; k++) {
+                                    for (k = 0; k < scope.selectedNodes.length; k++) {
                                         if (scope.selectedNodes[k].key === dynatreeNode.cidsNode.key) {
                                             childNode.toggleSelect();
                                             break;
