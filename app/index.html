@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
         <link rel="stylesheet" href="bower_components/dynatree/dist/skin/ui.dynatree.css">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-        <!-- build:css({.tmp,app}) styles/main.css -->
+        <!-- build:css() -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
     </head>
@@ -23,7 +23,6 @@
 
         <!-- Add your site or application content here -->
         <div class="container" ng-include="'views/main.html'" ></div>
-
 
         <!--[if lt IE 9]>
         <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -40,9 +39,8 @@
         <script src="bower_components/dynatree/dist/jquery.dynatree.js"></script>
         <script src="bower_components/icmm_js/dist/scripts/icmm_js.js"></script>
         <!-- endbower -->
-        <!-- endbuild -->
-         <!-- ngtemplates adds generated templates -->
-        <!-- build:js({.tmp,app}) scripts/crisma-worldstate-tree-widget-angular.min.js -->
+
+        <!-- build:js() -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/directives/catalogue-tree.js"></script>
