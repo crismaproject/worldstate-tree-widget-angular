@@ -214,6 +214,16 @@ module.exports = function (grunt) {
                         dest: '<%= targetMin %>',
                         src: ['index.html', 'views/*.html']
                     }]
+            },
+            custom: {
+                preserveTimestamp: true,
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= targetDist %>',
+                    dest: '<%= targetMin %>',
+                    src: ['bower_components/dynatree/dist/skin*/*.gif']
+                }]
             }
         },
         cdnify: {
@@ -454,7 +464,7 @@ module.exports = function (grunt) {
         
         indexhtml = grunt.file.read('./' + grunt.config.get('targetMin') + '/index.html');
 
-        regex = /="(bower_components\/)([^\/]+)(.+)(\.js|\.css)"/g;
+        regex = /="(bower_components\/.+)(\.js|\.css)"/g;
         match = regex.exec(indexhtml);
         
         if (match === null) {
@@ -464,7 +474,7 @@ module.exports = function (grunt) {
         }
         
         while (match !== null) {
-            path = match[1] + match[2] + match[3];
+            path = match[1] + match[2];
             minpath = match[1] + '.min' + match[2];
             
             if (grunt.file.exists(grunt.config.get('targetDist') + '/' + minpath)) {
@@ -563,7 +573,8 @@ module.exports = function (grunt) {
     ]);
     
     grunt.registerTask('package', [
-       'depend:min:package'
+       'depend:min:package',
+       'copy:custom'
     ]);
 
     // TODO: not implemented yet
