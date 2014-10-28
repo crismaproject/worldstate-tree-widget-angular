@@ -36,16 +36,40 @@ module.exports = function (grunt) {
                     }]
             }
         },
-        
-        // validate target
-        jshint: {
-            options: {
-                jshintrc: '.jshintrc'
+        chmod: {
+            // NOTE: this is only for savety reasons, maybe we consider it unnecessary and slow
+            // chmod does not handle directories in globbing patterns well and how do we actually match only files -.-
+            read: {
+                options: {
+                    mode: '444'
+                },
+                src: [
+                    '<%= targetDist %>/**/*.js',
+                    '<%= targetDist %>/**/*.css',
+                    '<%= targetDist %>/**/*.html',
+                    '<%= targetDist %>/**/*.png',
+                    '<%= targetDist %>/**/*.gif',
+                    '<%= targetDist %>/**/*.svg',
+                    '<%= targetDist %>/**/*.js',
+                ]
             },
-            all: [
-                '<%= src %>/scripts/{,*/}*.js'
-            ]
+            write: {
+                options: {
+                    mode: '744'
+                },
+                src: [
+                    '<%= target %>/**/*.js',
+                    '<%= target %>/**/*.css',
+                    '<%= target %>/**/*.html',
+                    '<%= target %>/**/*.png',
+                    '<%= target %>/**/*.gif',
+                    '<%= target %>/**/*.svg',
+                    '<%= target %>/**/*.js',
+                ]
+            }
         },
+        // validate target
+        
         bower: {
             install: {
                 options: {
@@ -56,6 +80,14 @@ module.exports = function (grunt) {
         },
         
         // generateSources target
+        jshint: {
+            options: {
+                jshintrc: '.jshintrc'
+            },
+            all: [
+                '<%= src %>/scripts/{,*/}*.js'
+            ]
+        },
         sync: {
             targetDist: {
                 files: [{
@@ -524,22 +556,25 @@ module.exports = function (grunt) {
     });
     
     grunt.registerTask('clean', [
+        'depend:validate:clean',
         'doclean:target'
     ]);
     
     grunt.registerTask('validate', [
         'checkDependencies',
-        'jshint'
+        'chmod:write'
     ]);
     
     grunt.registerTask('generateSources', [
         'depend:validate:generateSources',
+        'jshint',
         'sync:targetDist',
         'autoprefixer'
     ]);
     
     grunt.registerTask('build', [
-        'depend:test:build'
+        'depend:test:build',
+        'chmod:read'
     ]);
     
     grunt.registerTask('serve', [
