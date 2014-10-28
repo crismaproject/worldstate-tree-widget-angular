@@ -1,8 +1,5 @@
 angular.module(
-    'de.cismet.crisma.widgets.worldstateTreeWidget.directives',
-    [
-        'de.cismet.commons.angular.angularTools'
-    ]
+    'de.cismet.crisma.widgets.worldstateTreeWidget.directives'
 ).directive('catalogueTree',
     [
         'de.cismet.commons.angular.angularTools.AngularTools',
