@@ -7,14 +7,40 @@
 module.exports = function (grunt) {
     'use strict';
 
+    var customCopy, directivesMainModuleName;
+
+    /*
+     * ===========================================================================================================
+     * ============================================= CONFIGURATION ===============================================
+     * ===========================================================================================================
+     */
+    // TODO: find a way for more convenient configuration
+    directivesMainModuleName = 'de.cismet.crisma.widgets.worldstateTreeWidget.directives';
+
+    customCopy = {
+        preserveTimestamp: true,
+        files: [{
+            expand: true,
+            dot: true,
+            cwd: '<%= targetDist %>',
+            dest: '<%= targetMin %>',
+            src: ['bower_components/dynatree/dist/skin*/*.gif']
+        }]
+    };
+
     require('load-grunt-tasks')(grunt);
     require('time-grunt')(grunt);
 
     grunt.initConfig({
-        projectName: require('./bower.json').name || grunt.fail.fatal('cannot find project name in bower.json'),
-        // TODO: find a way for more convenient configuration
-        directivesMainModuleName: 'de.cismet.crisma.widgets.worldstateTreeWidget.directives',
+        /*
+         * ========================================================================================================
+         * ============================================= DEFAULTS =================================================
+         * ========================================================================================================
+         * 
+         *                         !do not change unless you are sure what you are doing!
+         */
 
+        projectName: require('./bower.json').name || grunt.fail.fatal('cannot find project name in bower.json'),
         src: 'app',
         dist: 'dist',
         templates: '<%= src %>/templates',
@@ -28,7 +54,16 @@ module.exports = function (grunt) {
         targetMin: '<%= target %>/minDist',
         targetConcat: '<%= target %>/concat',
 
-        // clean target
+        directivesMainModuleName: directivesMainModuleName,
+
+
+        /*
+         * ========================================================================================================
+         * ============================================ TASK SECTION ==============================================
+         * ========================================================================================================
+         */
+
+        // clean task
         doclean: {
             target: {
                 files: [{
@@ -71,8 +106,8 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        // validate target
 
+        // validate task
         bower: {
             install: {
                 options: {
@@ -82,7 +117,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // generateSources target
+        // generateSources task
         jshint: {
             options: {
                 jshintrc: '.jshintrc'
@@ -112,7 +147,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // run target
+        // run task
         connect: {
             options: {
                 port: 9000,
@@ -139,7 +174,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // several targets
+        // several tasks
         concurrent: {
             concat: [
                 'concat_js',
@@ -155,7 +190,7 @@ module.exports = function (grunt) {
             ]
         },
 
-        // concat target
+        // concat task
         concat_js: {
             js: {
                 src: [
@@ -170,7 +205,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // prepareMin target
+        // prepareMin task
         // ngAnnotate creates the initial min.js file
         ngAnnotate: {
             min: {
@@ -221,7 +256,6 @@ module.exports = function (grunt) {
                     // 
                     {from: /if\s*\(\s*DEBUG\s*\)\s*\{\s*console\s*\.\s*log\s*\(\s*('|").*\1??\s*\)\s*;?\s*\}/g, to: ''}
                 ]
-
             }
         },
         copy: {
@@ -235,16 +269,7 @@ module.exports = function (grunt) {
                     src: ['index.html', 'views/*.html']
                 }]
             },
-            custom: {
-                preserveTimestamp: true,
-                files: [{
-                    expand: true,
-                    dot: true,
-                    cwd: '<%= targetDist %>',
-                    dest: '<%= targetMin %>',
-                    src: ['bower_components/dynatree/dist/skin*/*.gif']
-                }]
-            }
+            custom: customCopy
         },
         cdnify: {
             google: {
@@ -305,7 +330,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // min target
+        // min task
         imagemin: {
             min: {
                 files: [{
@@ -375,7 +400,7 @@ module.exports = function (grunt) {
             }
         },
 
-        // test target
+        // test task
         karma: {
             unit: {
                 configFile: 'karma.conf.js',
@@ -384,9 +409,10 @@ module.exports = function (grunt) {
         }
     });
 
+
     /*
      * =============================================================================================================
-     * ============================================= TASK SECTION ==================================================
+     * ========================================== CUSTOM TASK SECTION ==============================================
      * =============================================================================================================
      * 
      * helper tasks to accomplish the lifecycle
