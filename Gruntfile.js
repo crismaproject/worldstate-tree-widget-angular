@@ -1,5 +1,3 @@
-'use strict';
-
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -7,6 +5,8 @@
 // 'test/spec/**/*.js'
 
 module.exports = function (grunt) {
+    'use strict';
+    
     require('load-grunt-tasks')(grunt);
     require('time-grunt')(grunt);
 
@@ -14,26 +14,29 @@ module.exports = function (grunt) {
         projectName: require('./bower.json').name || grunt.fail.fatal('cannot find project name in bower.json'),
         // TODO: find a way for more convenient configuration
         directivesMainModuleName: 'de.cismet.crisma.widgets.worldstateTreeWidget.directives',
-        
+
         src: 'app',
         dist: 'dist',
+        templates: '<%= src %>/templates',
+
         test: 'test',
-        
+        testSpec: '<%= test %>/spec',
+        testMock: '<%= test %>/mock',
+
         target: 'target',
         targetDist: '<%= target %>/dist',
         targetMin: '<%= target %>/minDist',
         targetConcat: '<%= target %>/concat',
-        targetTest: '<%= target %>/test',
-        
+
         // clean target
         doclean: {
             target: {
                 files: [{
-                        dot: true,
-                        src: [
-                            '<%= target %>/*'
-                        ]
-                    }]
+                    dot: true,
+                    src: [
+                        '<%= target %>/*'
+                    ]
+                }]
             }
         },
         chmod: {
@@ -50,7 +53,7 @@ module.exports = function (grunt) {
                     '<%= targetDist %>/**/*.png',
                     '<%= targetDist %>/**/*.gif',
                     '<%= targetDist %>/**/*.svg',
-                    '<%= targetDist %>/**/*.js',
+                    '<%= targetDist %>/**/*.js'
                 ]
             },
             write: {
@@ -64,12 +67,12 @@ module.exports = function (grunt) {
                     '<%= target %>/**/*.png',
                     '<%= target %>/**/*.gif',
                     '<%= target %>/**/*.svg',
-                    '<%= target %>/**/*.js',
+                    '<%= target %>/**/*.js'
                 ]
             }
         },
         // validate target
-        
+
         bower: {
             install: {
                 options: {
@@ -78,7 +81,7 @@ module.exports = function (grunt) {
                 }
             }
         },
-        
+
         // generateSources target
         jshint: {
             options: {
@@ -101,14 +104,14 @@ module.exports = function (grunt) {
             options: ['last 1 version'],
             gen_css: {
                 files: [{
-                        expand: true,
-                        cwd: '<%= targetDist %>/styles/',
-                        src: '{,*/}*.css',
-                        dest: '<%= targetDist %>/styles/'
-                    }]
+                    expand: true,
+                    cwd: '<%= targetDist %>/styles/',
+                    src: '{,*/}*.css',
+                    dest: '<%= targetDist %>/styles/'
+                }]
             }
         },
-        
+
         // run target
         connect: {
             options: {
@@ -124,22 +127,7 @@ module.exports = function (grunt) {
                         '<%= targetDist %>'
                     ]
                 }
-            }/*,
-            test: {
-                options: {
-                    port: 9001,
-                    base: [
-                        '.tmp',
-                        'test',
-                        '<%= yeoman.app %>'
-                    ]
-                }
-            },
-            dist: {
-                options: {
-                    base: '<%= yeoman.dist %>'
-                }
-            }*/
+            }
         },
         watch: {
             livereload: {
@@ -150,7 +138,7 @@ module.exports = function (grunt) {
                 tasks: ['build']
             }
         },
-        
+
         // several targets
         concurrent: {
             concat: [
@@ -166,7 +154,7 @@ module.exports = function (grunt) {
                 'htmlmin'
             ]
         },
-        
+
         // concat target
         concat_js: {
             js: {
@@ -181,7 +169,7 @@ module.exports = function (grunt) {
                 dest: '<%= targetConcat %>/styles/<%= projectName %>.css'
             }
         },
-        
+
         // prepareMin target
         // ngAnnotate creates the initial min.js file
         ngAnnotate: {
@@ -240,12 +228,12 @@ module.exports = function (grunt) {
             html: {
                 preserveTimestamp: true,
                 files: [{
-                        expand: true,
-                        dot: true,
-                        cwd: '<%= targetDist %>',
-                        dest: '<%= targetMin %>',
-                        src: ['index.html', 'views/*.html']
-                    }]
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= targetDist %>',
+                    dest: '<%= targetMin %>',
+                    src: ['index.html', 'views/*.html']
+                }]
             },
             custom: {
                 preserveTimestamp: true,
@@ -283,13 +271,13 @@ module.exports = function (grunt) {
                         angular: {
                             versions: ['1.2.25'],
                             url: function (version) {
-                               return '//ajax.googleapis.com/ajax/libs/angularjs/' + version + '/angular.min.js';
+                                return '//ajax.googleapis.com/ajax/libs/angularjs/' + version + '/angular.min.js';
                             }
                         },
                         'angular-resource': {
                             versions: ['1.2.25'],
                             url: function (version) {
-                               return '//ajax.googleapis.com/ajax/libs/angularjs/' + version + '/angular-resource.min.js';
+                                return '//ajax.googleapis.com/ajax/libs/angularjs/' + version + '/angular-resource.min.js';
                             }
                         },
                         bootstrap : {
@@ -308,34 +296,34 @@ module.exports = function (grunt) {
             options: {
                 blockReplacements: {
                     css: function (block) {
-                        return '<link rel="stylesheet" href="styles/'+ grunt.config.get('projectName') + '.min.css">';
+                        return '<link rel="stylesheet" href="styles/' + grunt.config.get('projectName') + '.min.css">';
                     },
                     js: function (block) {
-                        return '<script src="scripts/'+ grunt.config.get('projectName') + '.min.js"></script>';
+                        return '<script src="scripts/' + grunt.config.get('projectName') + '.min.js"></script>';
                     }
                 }
             }
         },
-        
+
         // min target
         imagemin: {
             min: {
                 files: [{
-                        expand: true,
-                        cwd: '<%= targetDist %>/images',
-                        src: '{,*/}*.{png,jpg,jpeg}',
-                        dest: '<%= targetMin %>/images'
-                    }]
+                    expand: true,
+                    cwd: '<%= targetDist %>/images',
+                    src: '{,*/}*.{png,jpg,jpeg}',
+                    dest: '<%= targetMin %>/images'
+                }]
             }
         },
         svgmin: {
             min: {
                 files: [{
-                        expand: true,
-                        cwd: '<%= targetDist %>/images',
-                        src: '{,*/}*.svg',
-                        dest: '<%= targetMin %>/images'
-                    }]
+                    expand: true,
+                    cwd: '<%= targetDist %>/images',
+                    src: '{,*/}*.svg',
+                    dest: '<%= targetMin %>/images'
+                }]
             }
         },
         cssmin: {
@@ -372,46 +360,40 @@ module.exports = function (grunt) {
                     removeIgnored: true,
                     //lint: true,
                     minifyJs: {
-                mangle: true,
-                compress: true,
-                sourceMap: true
-            },
+                        mangle: true,
+                        compress: true,
+                        sourceMap: true
+                    },
                     minifyCss: true
                 },
                 files: [{
-                        expand: true,
-                        cwd: '<%= targetMin %>',
-                        src: ['*.html', 'views/*.html'],
-                        dest: '<%= targetMin %>'
-                    }]
+                    expand: true,
+                    cwd: '<%= targetMin %>',
+                    src: ['*.html', 'views/*.html'],
+                    dest: '<%= targetMin %>'
+                }]
             }
         },
-        
+
         // test target
         karma: {
             unit: {
-                options: {
-                    files: [
-                        '<%= targetDist %>/**/*.js',
-                        '<%= test %>/**/*.js'
-                    ]
-                },
                 configFile: 'karma.conf.js',
                 singleRun: true
             }
         }
     });
 
-    
+
     /*
      * =============================================================================================================
      * ============================================= TASK SECTION ==================================================
      * =============================================================================================================
      */
-    
+
     grunt.task.renameTask('clean', 'doclean');
     grunt.task.renameTask('concat', 'concat_js');
-    
+
     /* 
      * unfortunately we cannot access the task registry so we don't know what is actually queued and we don't know 
      * which tasks actually configured the dependency so we have to force users to actively declare what task is the
@@ -463,7 +445,7 @@ module.exports = function (grunt) {
             }
         }
     });
-    
+
     /*
      * cdnify does not support css (yet?) -.-
      */
@@ -486,14 +468,14 @@ module.exports = function (grunt) {
             }
         }
     });
-    
+
     /*
      * cdnify may not know the versions already or has some other trouble so we copy the minified versions to the min 
      * dist and update the index.html
      */
     grunt.registerTask('copyUncdnified', function () {
         var copypath, indexhtml, match, minpath, path, regex;
-        
+
         indexhtml = grunt.file.read('./' + grunt.config.get('targetMin') + '/index.html');
 
         regex = /="(bower_components\/.+)(\.js|\.css)"/g;
@@ -516,7 +498,7 @@ module.exports = function (grunt) {
                 copypath = path;
             }
             
-            grunt.verbose.writeln('copy ' + copypath + ' to minified distribution')
+            grunt.verbose.writeln('copy ' + copypath + ' to minified distribution');
             grunt.file.copy(
                 grunt.config.get('targetDist') + '/' + copypath, 
                 grunt.config.get('targetMin') + '/' + copypath);
@@ -553,6 +535,67 @@ module.exports = function (grunt) {
         }
         
         grunt.file.write(filename, JSON.stringify({lastCheck: now}));
+    });
+    
+    /*
+     * sync karma conf with index.html
+     */
+    grunt.registerTask('updateKarmaConfAndRun', function () {
+        var htmlFiles, indexhtml, jsFiles, karmaconf, match, mockFiles, regex, sep, specFiles, testFiles;
+        
+        specFiles = grunt.file.expand(grunt.config.get('testSpec') + '/**/*.js');
+        mockFiles = grunt.file.expand(grunt.config.get('testMock') + '/**/*.js');
+        
+        if (specFiles.length === 0 && mockFiles.length === 0) {
+            grunt.log.writeln('no test files available, skipping tests');
+            
+            return true;
+        }
+        
+        grunt.log.writeln("found " + specFiles.length + " spec files");
+        grunt.log.writeln("found " + mockFiles.length + " mock files");
+        
+        indexhtml = grunt.file.read(grunt.config.get('targetDist') + '/index.html');
+        
+        regex = /<script src="(.*\.js)">/g;
+        match = regex.exec(indexhtml);
+        
+        jsFiles = [];
+        while (match !== null) {
+            jsFiles.push(grunt.config.get('targetDist') + '/' + match[1]);
+            match = regex.exec(indexhtml);
+        }
+        
+        htmlFiles = grunt.file.expand(grunt.config.get('templates') + '/**/*.html');
+        
+        sep = "',\n        '";
+        testFiles = "    files: [\n        '" 
+                + jsFiles.join(sep)
+                + sep
+                + htmlFiles.join(sep);
+        
+        if (specFiles.length > 0) {
+            testFiles = testFiles
+                    + sep
+                    + specFiles.join(sep);
+        }
+        if (mockFiles.length > 0) {
+            testFiles = testFiles
+                    + sep
+                    + grunt.config.get('targetDist') + '/bower_components/angular-mocks/angular-mocks.js'
+                    + sep
+                    + mockFiles.join(sep);
+        }
+        
+        testFiles = testFiles + "'\n    ]";
+        
+        grunt.verbose.writeln('created files entry:\n' + testFiles);
+        
+        karmaconf = grunt.file.read('karma.conf.js');
+        karmaconf = karmaconf.replace(/ *files:\s*\[([\s\S]*?)\]/, testFiles);
+        grunt.file.write('karma.conf.js', karmaconf);
+        
+        grunt.task.run('karma');
     });
     
     grunt.registerTask('clean', [
@@ -612,11 +655,9 @@ module.exports = function (grunt) {
        'copy:custom'
     ]);
 
-    // TODO: not implemented yet
     grunt.registerTask('test', [
         'depend:generateSources:test',
-//        'connect:serve',
-        //'karma'
+        'updateKarmaConfAndRun'
     ]);
 
     grunt.registerTask('default', [
