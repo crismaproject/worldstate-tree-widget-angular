@@ -6,7 +6,7 @@
 
 module.exports = function (grunt) {
     'use strict';
-    
+
     require('load-grunt-tasks')(grunt);
     require('time-grunt')(grunt);
 
@@ -384,11 +384,13 @@ module.exports = function (grunt) {
         }
     });
 
-
     /*
      * =============================================================================================================
      * ============================================= TASK SECTION ==================================================
      * =============================================================================================================
+     * 
+     * helper tasks to accomplish the lifecycle
+     * 
      */
 
     grunt.task.renameTask('clean', 'doclean');
@@ -598,36 +600,6 @@ module.exports = function (grunt) {
         grunt.task.run('karma');
     });
     
-    grunt.registerTask('clean', [
-        'depend:validate:clean',
-        'doclean:target'
-    ]);
-    
-    grunt.registerTask('validate', [
-        'checkDependencies',
-        'chmod:write'
-    ]);
-    
-    grunt.registerTask('generateSources', [
-        'depend:validate:generateSources',
-        'jshint',
-        'sync:targetDist',
-        'autoprefixer'
-    ]);
-    
-    grunt.registerTask('build', [
-        'depend:test:build',
-        'chmod:read'
-    ]);
-    
-    grunt.registerTask('serve', [
-        'depend:build:serve',
-        'connect:serve',
-        'watch'
-    ]);
-    
-    grunt.registerTask('run', ['serve']);
-    
     grunt.registerTask('concat', [
         'depend:build:concat',
         'concurrent:concat'
@@ -650,17 +622,83 @@ module.exports = function (grunt) {
        'concurrent:min'
     ]);
     
-    grunt.registerTask('package', [
-       'depend:min:package',
-       'copy:custom'
+    /*
+     * ================================================== LIFECYCLE ===============================================
+     * 
+     * default:
+     * - validate
+     * - generateSources
+     * - test
+     * - build
+     * - package
+     * 
+     */
+
+    grunt.registerTask('default', [
+        'package'
+    ]);
+    
+    grunt.registerTask('validate', [
+        'checkDependencies',
+        'chmod:write'
+    ]);
+    
+    grunt.registerTask('generateSources', [
+        'depend:validate:generateSources',
+        'jshint',
+        'sync:targetDist',
+        'autoprefixer'
     ]);
 
     grunt.registerTask('test', [
         'depend:generateSources:test',
         'updateKarmaConfAndRun'
     ]);
-
-    grunt.registerTask('default', [
-        'package'
+    
+    grunt.registerTask('build', [
+        'depend:test:build',
+        'chmod:read'
+    ]);
+    
+    grunt.registerTask('package', [
+       'depend:build:package',
+       'concat',
+       'prepareMin',
+       'min',
+       'copy:custom'
+    ]);
+    
+    /*
+     * ================================================== LIFECYCLE ===============================================
+     * 
+     * run/serve:
+     * - validate
+     * - generateSources
+     * - test
+     * - build
+     * - run
+     * 
+     */
+    
+    grunt.registerTask('serve', [
+        'depend:build:serve',
+        'connect:serve',
+        'watch'
+    ]);
+    
+    grunt.registerTask('run', ['serve']);
+    
+    /*
+     * ================================================== LIFECYCLE ===============================================
+     * 
+     * clean:
+     * - validate
+     * - clean
+     * 
+     */
+    
+    grunt.registerTask('clean', [
+        'depend:validate:clean',
+        'doclean:target'
     ]);
 };
