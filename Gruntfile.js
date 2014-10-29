@@ -403,29 +403,29 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('depend', function () {
         var doExecute, i, invokingTask, j, task;
-        
-        if(!grunt.executedDependencies) {
+
+        if (!grunt.executedDependencies) {
             grunt.executedDependencies = [];
         }
-        
-        if(arguments.length === 1) {
+
+        if (arguments.length === 1) {
             grunt.fail.fatal('invalid dependency configuration, did you provide the invoking task?');
         }
-        
+
         invokingTask = arguments[arguments.length - 1];
-        
+
         if (!grunt.task.exists(invokingTask)) {
             grunt.fail.fatal('invalid dependency configuration, the invoking task does not exist: ' + invokingTask);
         }
-        
+
         grunt.executedDependencies.push(invokingTask);
-        
+
         for (i = 0; i < arguments.length - 1; ++i) {
             task = arguments[i];
-            
+
             if (grunt.task.exists(task)) {
                 doExecute = true;
-                
+
                 for (j = 0; j < grunt.executedDependencies.length; ++j) {
                     if (task === grunt.executedDependencies[j]) {
                         grunt.verbose.writeln('skipping task execution, already executed: ' + task);
@@ -433,13 +433,12 @@ module.exports = function (grunt) {
                         break;
                     }
                 }
-                
-                if(doExecute) {
+
+                if (doExecute) {
                     grunt.verbose.writeln('executing dependency task: ' + task);
                     grunt.task.run(task);
                     grunt.executedDependencies.push(arguments[i]);
                 }
-                
             } else {
                 grunt.log.error('ignoring invalid task: ' + task);
             }
@@ -450,18 +449,19 @@ module.exports = function (grunt) {
      * cdnify does not support css (yet?) -.-
      */
     grunt.registerTask('cdnifyCss', function () {
-        var bowerJson, bootstrapVersion, indexhtml, match, regex;
-        
+        var bowerJson, bootstrapVersion, indexhtml;
+
         indexhtml = grunt.file.read('./' + grunt.config.get('targetMin') + '/index.html');
         bowerJson = require('./bower.json');
         if (bowerJson.dependencies) {
             bootstrapVersion = bowerJson.dependencies.bootstrap;
-            
+
             if (bootstrapVersion) {
                 grunt.log.writeln('found bootstrap dependency, cdnify: ' + bootstrapVersion);
                 indexhtml = indexhtml.replace(
-                    /bower_components.+bootstrap(\.min)?\.css/, 
-                    "//maxcdn.bootstrapcdn.com/bootstrap/" + bootstrapVersion + "/css/bootstrap.min.css");
+                    /bower_components.+bootstrap(\.min)?\.css/,
+                    "//maxcdn.bootstrapcdn.com/bootstrap/" + bootstrapVersion + "/css/bootstrap.min.css"
+                );
                 grunt.file.write('./' + grunt.config.get('targetMin') + '/index.html', indexhtml);
             } else {
                 grunt.log.writeln('Nothing to do');
