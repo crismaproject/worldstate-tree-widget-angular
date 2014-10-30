@@ -57,11 +57,16 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false
+    singleRun: true,
+    
+    reporters: ['progress', 'junit'],
+    junitReporter: {
+        outputFile: 'test-results.xml'
+    }
   });
 };
