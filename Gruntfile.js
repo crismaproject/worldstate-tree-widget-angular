@@ -565,6 +565,38 @@ module.exports = function (grunt) {
         grunt.file.write(filename, JSON.stringify({lastCheck: now}));
     });
     
+    grunt.registerTask('checkDirectDependencies', function () {
+        var dep, dependencies, found, indexhtml, match, regex;
+        
+        grunt.log.writeln('matching script usages of index.html against bower dependencies');
+
+        indexhtml = grunt.file.read(grunt.config.get('src') + '/index.html');
+        dependencies = require('./bower.json').dependencies;
+        
+        regex = /="(bower_components\/([\w-\.]+).+\.js)"/g;
+        match = regex.exec(indexhtml);
+        
+        while (match !== null) {
+            found = false;
+            for (dep in dependencies) {
+                if (dependencies.hasOwnProperty(dep) && match[2] === dep) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (found) {
+                grunt.verbose.writeln('found direct dependency: ' + match[2]);
+            } else {
+                grunt.fail.warn('Did not find direct dependency "' + match[2] + '" in bower.json!\n'
+                        + 'It is highly recommended that you declare a dependency '
+                        + 'for every library that you use in your index.html!');
+            }
+            
+            match = regex.exec(indexhtml);
+        }
+    });
+    
     /*
      * sync karma conf with index.html
      */
@@ -711,6 +743,7 @@ module.exports = function (grunt) {
     
     grunt.registerTask('validate', [
         'checkDependencies',
+        'checkDirectDependencies',
         'chmod:write'
     ]);
     
