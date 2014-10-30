@@ -625,7 +625,51 @@ module.exports = function (grunt) {
         
         grunt.task.run('karma');
     });
-    
+
+    grunt.registerTask('bowerDist', function() {
+        var absDist, absSrc, files, fs, gruntDir, i, statDist, statSrc;
+        
+        gruntDir = process.cwd();
+        
+        try {
+            grunt.log.writeln('copying generated files to dist');
+            
+            fs = require('fs');
+            absDist = gruntDir + '/' + grunt.config.get('dist');
+            absSrc = gruntDir + '/' + grunt.config.get('src');
+
+            grunt.file.setBase(grunt.config.get('targetConcat'));
+
+            files = grunt.file.expand('./**/*.*');
+            for(i = 0; i < files.length; ++i) {
+                grunt.file.copy(files[i], absDist + '/' + files[i]);
+            }
+
+            grunt.file.setBase(gruntDir + '/' + grunt.config.get('targetDist'));
+
+            files = grunt.file.expand({cwd: absSrc}, 'images/**/*.*');
+            for(i = 0; i < files.length; ++i) {
+                statSrc  = fs.statSync(absSrc + '/' + files[i]);
+                if(grunt.file.exists(absDist + '/' + files[i])) {
+                    statDist = fs.statSync(absDist + '/' + files[i]);
+                } else {
+                    statDist = {mtime: new Date(0)};
+                }
+
+                if(statSrc.mtime.getTime() === statDist.mtime.getTime()) {
+                    grunt.verbose.writeln('image not modified: ' + files[i]);
+                } else {
+                    grunt.log.writeln('found modified image, copying: ' + files[i]);
+
+                    grunt.file.copy(files[i], absDist + '/' + files[i]);
+                    fs.utimesSync(absDist + '/' + files[i], statSrc.atime, statSrc.mtime);
+                }
+            }
+        } finally {
+            grunt.file.setBase(gruntDir);
+        }
+    });
+
     grunt.registerTask('concat', [
         'depend:build:concat',
         'concurrent:concat'
@@ -657,11 +701,12 @@ module.exports = function (grunt) {
      * - test
      * - build
      * - package
+     * - dist
      * 
      */
 
     grunt.registerTask('default', [
-        'package'
+        'dist'
     ]);
     
     grunt.registerTask('validate', [
@@ -692,6 +737,11 @@ module.exports = function (grunt) {
        'prepareMin',
        'min',
        'copy:custom'
+    ]);
+    
+    grunt.registerTask('dist', [
+        'depend:package:dist',
+        'bowerDist'
     ]);
     
     /*
