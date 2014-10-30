@@ -565,6 +565,11 @@ module.exports = function (grunt) {
         grunt.file.write(filename, JSON.stringify({lastCheck: now}));
     });
     
+    /*
+     * We match the scripts used in the index.html against the dependencies in bower.json. That way we make sure that
+     * every library that is actually needed is declared directly and is not only available due to transitive 
+     * dependencies.
+     */
     grunt.registerTask('checkDirectDependencies', function () {
         var dep, dependencies, found, indexhtml, match, regex;
         
