@@ -7,4 +7,6 @@ dist/*
 .sass-cache
 app/bower_components
 .idea
-
+target
+.checkDependencies
+test-results.xml

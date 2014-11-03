@@ -116,7 +116,7 @@ span.glyphicon{
 /* defines the icon for the unselected checkbox */
 span.custom-checkbox{
     background-position: 0px 0px;
-    background-image: url('app/images/glyphicons_153_unchecked.png');
+    background-image: url("../images/glyphicons_153_unchecked.png");
     width: 16px;
     height: 16px;
     display: inline-block;
