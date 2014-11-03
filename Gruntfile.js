@@ -557,12 +557,12 @@ module.exports = function (grunt) {
         
         if (now - lastCheck > 1000 * 60 * 60) {
             grunt.log.writeln('last check over an hour ago, checking dependencies');
-            grunt.task.run(['npm-install', 'bower:install']);
+            if(grunt.task.run(['npm-install', 'bower:install']) === true) {
+                grunt.file.write(filename, JSON.stringify({lastCheck: now}));
+            }
         } else {
             grunt.log.writeln('last check less than an hour ago, skipping dependency check');
         }
-        
-        grunt.file.write(filename, JSON.stringify({lastCheck: now}));
     });
     
     /*
@@ -701,6 +701,12 @@ module.exports = function (grunt) {
                     grunt.file.copy(files[i], absDist + '/' + files[i]);
                     fs.utimesSync(absDist + '/' + files[i], statSrc.atime, statSrc.mtime);
                 }
+            }
+            
+            grunt.file.setBase(gruntDir + '/' + grunt.config.get('targetMin'));
+            files = grunt.file.expand(['scripts/*', 'styles/*']);
+            for(i = 0; i < files.length; ++i) {
+                grunt.file.copy(files[i], absDist + '/' + files[i]);
             }
         } finally {
             grunt.file.setBase(gruntDir);
