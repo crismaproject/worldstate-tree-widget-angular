@@ -11,13 +11,27 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'app/bower_components/angular/angular.js',
-      'app/bower_components/angular-mocks/angular-mocks.js',
-      'app/bower_components/angular-resource/angular-resource.js',
-      'app/scripts/*.js',
-      'app/scripts/**/*.js',
-      'test/mock/**/*.js',
-      'test/spec/**/*.js'
+        'target/dist/bower_components/es5-shim/es5-shim.js',
+        'target/dist/bower_components/json3/lib/json3.min.js',
+        'target/dist/bower_components/jquery/dist/jquery.js',
+        'target/dist/bower_components/angular/angular.js',
+        'target/dist/bower_components/angular-resource/angular-resource.js',
+        'target/dist/bower_components/angular-commons/dist/scripts/angular-commons.js',
+        'target/dist/bower_components/bootstrap/dist/js/bootstrap.js',
+        'target/dist/bower_components/jquery-ui/ui/jquery-ui.js',
+        'target/dist/bower_components/dynatree/dist/jquery.dynatree.js',
+        'target/dist/bower_components/icmm_js/dist/scripts/icmm_js.js',
+        'target/dist/scripts/app.js',
+        'target/dist/scripts/controllers/_module.js',
+        'target/dist/scripts/controllers/main.js',
+        'target/dist/scripts/controllers/worldstateTreeController.js',
+        'target/dist/scripts/directives/_module.js',
+        'target/dist/scripts/directives/catalogue-tree.js',
+        'target/dist/scripts/directives/worldstateTree.js',
+        'app/templates/catalogue-tree.html',
+        'app/templates/worldstate-tree.html',
+        'test/spec/directives/catalogue-tree.js',
+        'test/spec/services/nodes.js'
     ],
 
     // list of files / patterns to exclude
@@ -43,11 +57,16 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false
+    singleRun: true,
+    
+    reporters: ['progress', 'junit'],
+    junitReporter: {
+        outputFile: 'test-results.xml'
+    }
   });
 };
