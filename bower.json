@@ -21,7 +21,7 @@
     "jquery": "2.1.1",
     "jquery-ui": "1.10.4",
     "dynatree": "1.2.5",
-    "icmm_js": "0.1.5"
+    "icmm_js": "1.1.2"
   },
   "devDependencies": {
     "angular-mocks": "1.2.25",
